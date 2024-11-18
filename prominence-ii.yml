@@ -22,9 +22,11 @@
     - server
   environment:
     KUBECONFIG: "{{ kube_config_path }}"
+  become: true
+  vars:
+    deployment: "prominence-ii"
+    namespace: "minecraft"
+    version: "3.0.12"
   roles:
-    - role: deploy
-      vars:
-        deployment: "prominence-ii"
-        namespace: "minecraft"
-        version: "3.0.12"
+    - deploy
+      
