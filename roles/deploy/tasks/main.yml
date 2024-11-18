@@ -74,11 +74,22 @@
         INIT_MEMORY: "8G" #TODO: variable
         MAX_MEMORY: "16G" #TODO: variable
         CF_BASE_DIR: "/data"
-        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip" #TODO: variable
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Pr8nce_II_RPG_Server_Pack_v3.0.12.zip" #TODO: variable
+
+- name: Create ops.json ConfigMap
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ deployment }}-ops-{{ version }}"
+        namespace: "{{ namespace }}"
+      data:
+        ops.json: "{{ ops_json  }}"
 
 #TODO: create network policy to allow:
 # - inbound to 25565 from *
-# - inbound to 80 from prometheus server
+# - inbound to 25575 from prometheus server
 
 
 - name: Create StatefulSet
@@ -105,9 +116,22 @@
           spec:
             nodeSelector:
               kubernetes.io/role: gamer
+            initContainers:
+              - name: init
+                image: "itzg/minecraft-server:java17"
+                command:
+                  - /bin/bash
+                  - -c
+                args:
+                  - mv -f /data/start.sh /data/start.sh.bak; cp -f /tmp/ops.json /data/ops.json;
+                volumeMounts:
+                  - name: "{{ deployment }}"
+                    mountPath: /data
+                  - name: "{{ deployment }}-ops"
+                    mountPath: /tmp
             containers:
               - name: "{{ deployment }}"
-                image: "coffee206/prominence2:latest" #TODO: variable
+                image: "itzg/minecraft-server:java17"
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 25565
@@ -210,6 +234,9 @@
               - name: "{{ deployment }}-save"
                 persistentVolumeClaim:
                   claimName: "{{ deployment }}-save"
+              - name: "{{ deployment }}-ops"
+                configMap:
+                  name: "{{ deployment }}-ops-{{ version }}"
 
 - name: Wait 15 seconds for old pods to start terminating
   pause:

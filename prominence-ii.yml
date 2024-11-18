@@ -27,6 +27,20 @@
     deployment: "prominence-ii"
     namespace: "minecraft"
     version: "3.0.12"
+    ops_json: |
+      [
+        {
+          "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
+          "name": "queen_of_wands",
+          "level": 4,
+          "bypassesPlayerLimit": false
+        },
+        {
+          "uuid": "595f1539-787c-4ce0-86eb-1f4829c20730",
+          "name": "Wolfy1996",
+          "level": 4
+        }
+      ]
   roles:
     - deploy
       
