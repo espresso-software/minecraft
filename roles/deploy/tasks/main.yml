@@ -85,7 +85,7 @@
         name: "{{ deployment }}-ops-{{ version }}"
         namespace: "{{ namespace }}"
       data:
-        ops.json: '{{ ops_json  }}'
+        ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
 #TODO: create network policy to allow:
 # - inbound to 25565 from *

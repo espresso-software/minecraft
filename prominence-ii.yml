@@ -27,7 +27,7 @@
     deployment: "prominence-ii"
     namespace: "minecraft"
     version: "3.0.12"
-    ops_json: |
+    ops_json:
       [
         {
           "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
