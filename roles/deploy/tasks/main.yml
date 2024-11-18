@@ -1,0 +1,265 @@
+---
+- name: Create Storage Class
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: StorageClass
+      metadata:
+        name: minecraft
+        labels:
+          name: minecraft
+          namespace: "{{ namespace }}"
+      provisioner: driver.longhorn.io
+      allowVolumeExpansion: true
+      parameters:
+        numberOfReplicas: "3"
+        staleReplicaTimeout: "2880"
+        dataLocality: "best-effort"
+        replicaAutoBalancing: "best-effort"
+        fromBackup: ""
+
+- name: Create Persistent Volume Claims
+  with_items:
+    - name: "{{ deployment }}"
+      size: 10Gi
+    - name: "{{ deployment }}-world"
+      size: 5Gi
+    - name: "{{ deployment }}-save"
+      size: 5Gi
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ namespace }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "{{ item.size }}"
+
+- name: Generate RCON password
+  set_fact:
+    rcon_password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
+
+- name: Create RCON Secret
+  no_log: true
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ deployment }}-rcon-{{ version }}"
+        namespace: "{{ namespace }}"
+      type: Opaque
+      data:
+        password: "{{ rcon_password | b64encode }}"
+
+- name: Create Environment ConfigMap
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ deployment }}-env-{{ version }}"
+        namespace: "{{ namespace }}"
+      data:
+        EULA: "true"
+        TYPE: "CURSEFORGE" #TODO: variable
+        SPAWN_PROTECTION: "0"
+        VERSION: "1.20.1" #TODO: variable
+        SEED: "-5322780995844550520" #TODO: variable
+        ALLOW_FLIGHT: "TRUE"
+        MOTD: "Prominence II v3.0.12" #TODO: variable
+        RCON_CMDS_STARTUP: "gamerule doFireTick false" #TODO: variable
+        MAX_PLAYERS: "30" #TODO: variable
+        INIT_MEMORY: "8G" #TODO: variable
+        MAX_MEMORY: "16G" #TODO: variable
+        CF_BASE_DIR: "/data"
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip" #TODO: variable
+
+#TODO: create network policy to allow:
+# - inbound to 25565 from *
+# - inbound to 80 from prometheus server
+
+
+- name: Create StatefulSet
+  kubernetes.core.k8s:
+    apply: yes
+    definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: "{{ deployment }}"
+        namespace: "{{ namespace }}"
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: "{{ deployment }}"
+            version: "{{ version }}"
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: "{{ deployment }}"
+              version: "{{ version }}"
+          spec:
+            nodeSelector:
+              kubernetes.io/role: gamer
+            containers:
+              - name: "{{ deployment }}"
+                image: "coffee206/prominence2:latest" #TODO: variable
+                imagePullPolicy: Always
+                ports:
+                  - containerPort: 25565
+                volumeMounts:
+                  - name: "{{ deployment }}"
+                    mountPath: /data
+                  - name: "{{ deployment }}-world"
+                    mountPath: /data/world
+                  - name: "{{ deployment }}-save"
+                    mountPath: /data/save
+                resources:
+                  requests:
+                    memory: "8Gi"
+                    cpu: "500m"
+                  limits:
+                    memory: "24Gi"
+                    cpu: "5500m"
+                envFrom:
+                  - configMapRef:
+                      name: "{{ deployment }}-env-{{ version }}"
+                env:
+                  - name: RCON_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ deployment }}-rcon-{{ version }}"
+                        key: password
+                livenessProbe:
+                  exec:
+                    command:
+                      - mc-health
+                  initialDelaySeconds: 30
+                  periodSeconds: 5
+                  failureThreshold: 20
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                readinessProbe:
+                  exec:
+                    command:
+                      - mc-health
+                  initialDelaySeconds: 30
+                  periodSeconds: 5
+                  failureThreshold: 20
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                startupProbe:
+                  exec:
+                    command:
+                      - mc-health
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  failureThreshold: 100
+                  successThreshold: 1
+                  timeoutSeconds: 1
+              - name: minecraft-exporter
+                image: "ghcr.io/dirien/minecraft-exporter:0.19.0"
+                ports:
+                  - containerPort: 9150
+                resources:
+                  requests:
+                    memory: "64Mi"
+                    cpu: "50m"
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+                env:
+                  - name: MC_WORLD
+                    value: /data/world
+                  - name: MC_MOD_SERVER_STATS
+                    value: fabric
+                  - name: MC_RCON_ADDRESS
+                    value: ":25575"
+                  - name: MC_RCON_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: "{{ deployment }}-rcon-{{ version }}"
+                        key: password
+                volumeMounts:
+                  - name: "{{ deployment }}-world"
+                    mountPath: /data/world
+                    readOnly: true
+                livenessProbe:
+                  httpGet:
+                    path: /
+                    port: 9150
+                  initialDelaySeconds: 30
+                  timeoutSeconds: 10
+                readinessProbe:
+                  httpGet:
+                    path: /
+                    port: 9150
+                  initialDelaySeconds: 30
+                  timeoutSeconds: 10
+            volumes:
+              - name: "{{ deployment }}"
+                persistentVolumeClaim:
+                  claimName: "{{ deployment }}"
+              - name: "{{ deployment }}-world"
+                persistentVolumeClaim:
+                  claimName: "{{ deployment }}-world"
+              - name: "{{ deployment }}-save"
+                persistentVolumeClaim:
+                  claimName: "{{ deployment }}-save"
+
+- name: Wait for StatefulSet to be ready
+  kubernetes.core.k8s_info:
+    kind: StatefulSet
+    namespace: "{{ namespace }}"
+    name: "{{ deployment }}"
+  register: statefulset_info
+  until: statefulset_info.resources[0].status.availableReplicas == 1
+  retries: 30
+  delay: 10
+
+- name: Create Server Service
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ deployment }}"
+        namespace: "{{ namespace }}"
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
+      spec:
+        selector:
+          app: "{{ deployment }}"
+        ports:
+          - protocol: TCP
+            port: 25565
+            targetPort: 25565
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        internalTrafficPolicy: Local
+
+- name: Create Exporter Service
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "{{ deployment }}-exporter"
+        namespace: "{{ namespace }}"
+      spec:
+        selector:
+          app: "{{ deployment }}"
+        ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 9150
+        type: ClusterIP

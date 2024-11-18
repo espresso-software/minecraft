@@ -1,0 +1,30 @@
+---
+#TODO: change from UFW to physical firewall device
+- name: Open Firewall Ports
+  hosts:
+    - k3s
+  tags:
+    - firewall
+  tasks:
+    - name: Open minecraft Ports
+      community.general.ufw:
+        rule: allow
+        dest: "{{ network.identifier }}.{{ network_address }}"
+        port: 25565
+        proto: tcp
+        comment: "prominence ii minecraft server }}"
+
+- name: 
+  hosts:
+    - k3s_managers
+  run_once: true
+  tags:
+    - server
+  environment:
+    KUBECONFIG: "{{ kube_config_path }}"
+  roles:
+    - role: deploy
+      vars:
+        deployment: "prominence-ii"
+        namespace: "minecraft"
+        version: "3.0.12"
