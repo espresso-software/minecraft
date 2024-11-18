@@ -124,7 +124,7 @@
                   - /bin/bash
                   - -c
                 args:
-                  - mv -f /data/start.sh /data/start.sh.bak; cp -f /tmp/ops.json /data/ops.json;
+                  - mv -f /data/start.sh /data/start.sh.bak; cat /tmp/ops.json; cp -f /tmp/ops.json /data/ops.json;
                 volumeMounts:
                   - name: "{{ deployment }}"
                     mountPath: /data

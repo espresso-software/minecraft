@@ -33,12 +33,13 @@
           "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
           "name": "queen_of_wands",
           "level": 4,
-          "bypassesPlayerLimit": false
+          "bypassesPlayerLimit": true
         },
         {
           "uuid": "595f1539-787c-4ce0-86eb-1f4829c20730",
           "name": "Wolfy1996",
-          "level": 4
+          "level": 4,
+          "bypassesPlayerLimit": true
         }
       ]
   roles:
