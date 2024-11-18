@@ -40,10 +40,6 @@
           requests:
             storage: "{{ item.size }}"
 
-- name: Generate RCON password
-  set_fact:
-    rcon_password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
-
 - name: Create RCON Secret
   no_log: true
   kubernetes.core.k8s:
@@ -55,7 +51,7 @@
         namespace: "{{ namespace }}"
       type: Opaque
       data:
-        password: "{{ rcon_password | b64encode }}"
+        password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
 
 - name: Create Environment ConfigMap
   kubernetes.core.k8s:
@@ -99,7 +95,6 @@
         selector:
           matchLabels:
             app: "{{ deployment }}"
-            version: "{{ version }}"
         strategy:
           type: Recreate
         template:
