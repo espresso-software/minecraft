@@ -136,9 +136,10 @@
                   - -c
                 args:
                   - |
-                    if [ $(find /data -maxdepth 1 -type f -name "*.zip" | grep -q -v {{ version }}) ]; then
+                    old_version_zip=$(find /data -maxdepth 1 -type f -name "*.zip" | grep -v {{ version }});
+                    if [ -n "$old_version_zip" ]; then
                       echo "Removing old server pack zip";
-                      find /data -maxdepth 1 -type f -name "*.zip" | grep -v {{ version }} | xargs rm -f;
+                      rm -rf $old_version_zip;
                       echo "Moving old server start script";
                       mv -f /data/start.sh /data/start.sh.bak;
                     fi
