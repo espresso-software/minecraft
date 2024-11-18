@@ -239,9 +239,9 @@
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
 
-- name: Wait 15 seconds for old pods to start terminating
+- name: Wait 30 seconds for old pods to start terminating
   pause:
-    seconds: 15
+    seconds: 30
 
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
