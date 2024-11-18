@@ -211,6 +211,10 @@
                 persistentVolumeClaim:
                   claimName: "{{ deployment }}-save"
 
+- name: Wait 15 seconds for old pods to start terminating
+  pause:
+    seconds: 15
+
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
     kind: StatefulSet
