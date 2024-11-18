@@ -117,18 +117,34 @@
             nodeSelector:
               kubernetes.io/role: gamer
             initContainers:
-              - name: init
+              - name: copy-ops
                 image: "itzg/minecraft-server:java17"
                 command:
                   - /bin/bash
                   - -c
                 args:
-                  - mv -f /data/start.sh /data/start.sh.bak; cat /tmp/ops.json; cp -f /tmp/ops.json /data/ops.json;
+                  - cat /tmp/ops.json; cp -f /tmp/ops.json /data/ops.json;
                 volumeMounts:
                   - name: "{{ deployment }}"
                     mountPath: /data
                   - name: "{{ deployment }}-ops"
                     mountPath: /tmp
+              - name: check-update
+                image: "itzg/minecraft-server:java17"
+                command:
+                  - /bin/bash
+                  - -c
+                args:
+                  - |
+                    if [ find /data -maxdepth 1 -type f -name "*.zip" | grep -q -v {{ version }} ]; then
+                      echo "Removing old server pack zip";
+                      find /data -maxdepth 1 -type f -name "*.zip" | grep -v {{ version }} | xargs rm -f;
+                      echo "Moving old server start script";
+                      mv -f /data/start.sh /data/start.sh.bak;
+                    fi
+                volumeMounts:
+                  - name: "{{ deployment }}"
+                    mountPath: /data
             containers:
               - name: "{{ deployment }}"
                 image: "itzg/minecraft-server:java17"
