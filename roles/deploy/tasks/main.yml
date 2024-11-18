@@ -74,7 +74,7 @@
         INIT_MEMORY: "8G" #TODO: variable
         MAX_MEMORY: "16G" #TODO: variable
         CF_BASE_DIR: "/data"
-        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Pr8nce_II_RPG_Server_Pack_v3.0.12.zip" #TODO: variable
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip" #TODO: variable
 
 - name: Create ops.json ConfigMap
   kubernetes.core.k8s:
