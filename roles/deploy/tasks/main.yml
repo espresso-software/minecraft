@@ -143,7 +143,7 @@
                 resources:
                   requests:
                     memory: "8Gi"
-                    cpu: "500m"
+                    cpu: "1500m"
                   limits:
                     memory: "24Gi"
                     cpu: "5500m"
