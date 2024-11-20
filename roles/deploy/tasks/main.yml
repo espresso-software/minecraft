@@ -62,7 +62,7 @@
         name: "{{ deployment }}-env-{{ version }}"
         namespace: "{{ namespace }}"
       data: |
-        {{ envConfigMapData | to_nice_yaml }}
+        "{{ envConfigMapData }}"
 
 - name: Create ops.json ConfigMap
   kubernetes.core.k8s:
