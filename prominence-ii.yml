@@ -42,20 +42,26 @@
           "bypassesPlayerLimit": true
         }
       ]
-    envConfigMapData:
-      EULA: "true"
-      TYPE: "CURSEFORGE"
-      SPAWN_PROTECTION: "0"
-      VERSION: "1.20.1"
-      SEED: "-5322780995844550520"
-      ALLOW_FLIGHT: "TRUE"
-      MOTD: "Prominence II v3.0.12"
-      RCON_CMDS_STARTUP: "gamerule doFireTick false"
-      MAX_PLAYERS: "30"
-      INIT_MEMORY: "8G"
-      MAX_MEMORY: "16G"
-      CF_BASE_DIR: "/data"
-      CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip"
+    envConfigMap:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ deployment }}-env-{{ version }}"
+        namespace: "{{ namespace }}"
+      data:
+        EULA: "true"
+        TYPE: "CURSEFORGE"
+        SPAWN_PROTECTION: "0"
+        VERSION: "1.20.1"
+        SEED: "-5322780995844550520"
+        ALLOW_FLIGHT: "TRUE"
+        MOTD: "Prominence II v3.0.12"
+        RCON_CMDS_STARTUP: "gamerule doFireTick false"
+        MAX_PLAYERS: "30"
+        INIT_MEMORY: "8G"
+        MAX_MEMORY: "16G"
+        CF_BASE_DIR: "/data"
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip"
   roles:
     - deploy
       
