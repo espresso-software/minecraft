@@ -146,11 +146,11 @@
                     mountPath: /data/save
                 resources:
                   requests:
-                    memory: "8Gi"
-                    cpu: "1500m"
+                    memory: "16Gi"
+                    cpu: "2000m"
                   limits:
                     memory: "24Gi"
-                    cpu: "5500m"
+                    cpu: "6000m"
                 envFrom:
                   - configMapRef:
                       name: "{{ deployment }}-env-{{ version }}"
@@ -193,11 +193,11 @@
                   - containerPort: 9150
                 resources:
                   requests:
-                    memory: "64Mi"
-                    cpu: "50m"
+                    memory: "16Mi"
+                    cpu: "15m"
                   limits:
-                    memory: "512Mi"
-                    cpu: "500m"
+                    memory: "128Mi"
+                    cpu: "100m"
                 env:
                   - name: MC_WORLD
                     value: /data/world
