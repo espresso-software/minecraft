@@ -42,6 +42,7 @@
 
 - name: Create RCON Secret
   no_log: true
+  register: rconSecret
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -54,10 +55,12 @@
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
 
 - name: Create Environment ConfigMap
+  register: envConfigMap_cm
   kubernetes.core.k8s:
     definition: "{{ envConfigMap | to_yaml }}"
 
 - name: Create ops.json ConfigMap
+  register: ops_json_cm
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -74,6 +77,7 @@
 
 
 - name: Create StatefulSet
+  register: statefulset
   kubernetes.core.k8s:
     apply: yes
     definition:
@@ -236,9 +240,9 @@
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
 
-- name: Wait 30 seconds for old pods to start terminating
-  pause:
-    seconds: 30
+- name: Force restart of StatefulSet
+  when: statefulset.changed or envConfigMap_cm.changed or ops_json_cm.changed or rconSecret.changed
+  ansible.builtin.command: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}"
 
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
