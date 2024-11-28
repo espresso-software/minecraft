@@ -242,7 +242,7 @@
 
 - name: Force restart of StatefulSet
   when: statefulset.changed or envConfigMap_cm.changed or ops_json_cm.changed or rconSecret.changed
-  ansible.builtin.command: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}"
+  ansible.builtin.command: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}" && sleep 30
 
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
