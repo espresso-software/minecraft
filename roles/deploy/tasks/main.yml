@@ -194,10 +194,10 @@
                 resources:
                   requests:
                     memory: "16Mi"
-                    cpu: "15m"
+                    cpu: "100m"
                   limits:
                     memory: "128Mi"
-                    cpu: "100m"
+                    cpu: "500m"
                 env:
                   - name: MC_WORLD
                     value: /data/world
