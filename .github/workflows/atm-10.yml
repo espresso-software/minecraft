@@ -6,6 +6,12 @@ name: ATM 10
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Enter tags to run'
+        required: true
+        default: 'server'
+        type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,6 +31,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Deploy minecraft server
         run: |
-          ansible-playbook -v -i inventory/hosts.ini atm-10.yml --extra-vars "network_address=3.101"
+          ansible-playbook -v -i inventory/hosts.ini atm-10.yml --tags "${{ github.events.inputs.tags }}" --extra-vars "network_address=3.101"
         
         
