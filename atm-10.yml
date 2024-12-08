@@ -37,6 +37,12 @@
           "name": "queen_of_wands",
           "level": 4,
           "bypassesPlayerLimit": true
+        },
+        {
+          "uuid": "e2602b7a-32d0-4bc8-874c-b4e292a3a0b3",
+          "name": "Miles_Teh_Husko",
+          "level": 4,
+          "bypassesPlayerLimit": true
         }
       ]
     envConfigMap:
