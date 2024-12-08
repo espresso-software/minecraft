@@ -61,7 +61,7 @@
         RCON_CMDS_STARTUP: |
           gamerule doFireTick false
           gamerule doInsomnia false
-        LEVEL_TYPE: "minecraft\\:amplified"
+        LEVEL_TYPE: "minecraft:amplified"
         INIT_MEMORY: "16G"
         MAX_MEMORY: "16G"
         CF_SLUG: "all-the-mods-10"
