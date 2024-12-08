@@ -19,6 +19,7 @@
         fromBackup: ""
 
 - name: Create Persistent Volume Claims
+  failed_when: false # ignore failure if PVC already exists
   with_items:
     - name: "{{ deployment }}"
       size: 10Gi
@@ -117,7 +118,7 @@
               kubernetes.io/role: gamer
             initContainers:
               - name: copy-ops
-                image: "itzg/minecraft-server:java17"
+                image: "itzg/minecraft-server:{{ itzg_tag }}"
                 command:
                   - /bin/bash
                   - -c
@@ -129,7 +130,7 @@
                   - name: "{{ deployment }}-ops"
                     mountPath: /tmp
               - name: check-update
-                image: "itzg/minecraft-server:java17"
+                image: "itzg/minecraft-server:{{ itzg_tag }}"
                 command:
                   - /bin/bash
                   - -c
@@ -147,7 +148,7 @@
                     mountPath: /data
             containers:
               - name: "{{ deployment }}"
-                image: "itzg/minecraft-server:java17"
+                image: "itzg/minecraft-server:{{ itzg_tag }}"
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 25565

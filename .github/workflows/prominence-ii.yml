@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Prominence II
+name: Deploy Modpack
 
 # Controls when the workflow will run
 on:
@@ -15,7 +15,6 @@ on:
       modpack:
         description: 'Enter modpack to run'
         required: true
-        default: 'fabric'
         type: choice
         options:
           - prominence-ii

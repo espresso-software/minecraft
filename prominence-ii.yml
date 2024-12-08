@@ -27,6 +27,7 @@
   vars:
     deployment: "prominence-ii"
     namespace: "minecraft"
+    itzg_tag: "java17"
     version: "3.0.12"
     server_stats: "fabric"
     ops_json:
