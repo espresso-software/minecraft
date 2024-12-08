@@ -1,6 +1,7 @@
 ---
 #TODO: change from UFW to physical firewall device
 - name: Open Firewall Ports
+  become: true
   hosts:
     - k3s
   tags:
