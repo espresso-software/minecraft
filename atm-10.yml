@@ -1,6 +1,7 @@
 ---
 #TODO: change from UFW to physical firewall device
 - name: Open Firewall Ports
+  become: true
   hosts:
     - k3s
   tags:
@@ -25,8 +26,9 @@
   become: true
   vars:
     deployment: "atm-10"
+    itzg_tag: "java21"
     namespace: "minecraft"
-    version: "3.0.12"
+    version: "2.0"
     server_stats: "forge"
     ops_json:
       [
@@ -49,7 +51,7 @@
         SEED: "oHgqCdJVwxDgBUWGzyxMA4FPDGWXeb2na9CCvBmmqKPk24ewymZWHeHdVZd4c3jp"
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
-        MOTD: "All The Mods 10"
+        MOTD: "All The Mods 10 {{ version }}"
         RCON_CMDS_STARTUP: |
           gamerule doFireTick false
           gamerule doInsomnia false

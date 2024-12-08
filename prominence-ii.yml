@@ -1,6 +1,7 @@
 ---
 #TODO: change from UFW to physical firewall device
 - name: Open Firewall Ports
+  become: true
   hosts:
     - k3s
   tags:
@@ -26,6 +27,7 @@
   vars:
     deployment: "prominence-ii"
     namespace: "minecraft"
+    itzg_tag: "java17"
     version: "3.0.12"
     server_stats: "fabric"
     ops_json:
