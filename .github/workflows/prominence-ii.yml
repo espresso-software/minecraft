@@ -43,12 +43,13 @@ jobs:
       - name: Determine IP address
         id: ip
         run: |
-          echo "::set-output name=modpack::${{ github.event.inputs.modpack }}"
-          if [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
-            echo "::set-output name=network_address::101"
-          else if [ "${{ github.event.inputs.modpack }}" == "prominence-ii" ]; then
-            echo "::set-output name=network_address::100"
+          ip_address=""
+          if [ "${{ github.event.inputs.modpack }}" == "prominence-ii" ]; then
+            ip_address="100"
+          elif [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
+            ip_address="101"
           fi
+          echo "::set-output name=network_address::${ip_address}"
 
       # Runs a single command using the runners shell
       - name: Deploy minecraft server
