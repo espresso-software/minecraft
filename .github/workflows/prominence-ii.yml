@@ -40,6 +40,16 @@ jobs:
         run: |
           echo "${{ secrets.VAULT_DECRYPT_TOKEN }}" > /tmp/vault_pass
 
+      - name: Determine IP address
+        id: ip
+        run: |
+          echo "::set-output name=modpack::${{ github.event.inputs.modpack }}"
+          if [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
+            echo "::set-output name=network_address::101"
+          else if [ "${{ github.event.inputs.modpack }}" == "prominence-ii" ]; then
+            echo "::set-output name=network_address::100"
+          fi
+
       # Runs a single command using the runners shell
       - name: Deploy minecraft server
         run: |
