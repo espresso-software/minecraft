@@ -12,7 +12,7 @@
         dest: "{{ network.identifier }}.{{ network_address }}"
         port: 25565
         proto: tcp
-        comment: "prominence ii minecraft server }}"
+        comment: "minecraft server"
 
 - name: 
   hosts:
@@ -24,21 +24,15 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
-    deployment: "prominence-ii"
+    deployment: "atm-10"
     namespace: "minecraft"
     version: "3.0.12"
-    server_stats: "fabric"
+    server_stats: "forge"
     ops_json:
       [
         {
           "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
           "name": "queen_of_wands",
-          "level": 4,
-          "bypassesPlayerLimit": true
-        },
-        {
-          "uuid": "595f1539-787c-4ce0-86eb-1f4829c20730",
-          "name": "Wolfy1996",
           "level": 4,
           "bypassesPlayerLimit": true
         }
@@ -51,18 +45,19 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "CURSEFORGE"
+        TYPE: "AUTO_CURSEFORGE"
+        SEED: "oHgqCdJVwxDgBUWGzyxMA4FPDGWXeb2na9CCvBmmqKPk24ewymZWHeHdVZd4c3jp"
         SPAWN_PROTECTION: "0"
-        VERSION: "1.20.1"
-        SEED: "-5322780995844550520"
         ALLOW_FLIGHT: "TRUE"
-        MOTD: "Prominence II v3.0.12"
-        RCON_CMDS_STARTUP: "gamerule doFireTick false"
-        MAX_PLAYERS: "30"
+        MOTD: "All The Mods 10"
+        RCON_CMDS_STARTUP: |
+          gamerule doFireTick false
+          gamerule doInsomnia false
+        LEVEL_TYPE: "minecraft\\:amplified"
         INIT_MEMORY: "16G"
         MAX_MEMORY: "16G"
-        CF_BASE_DIR: "/data"
-        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5903/180/Prominence_II_RPG_Server_Pack_v3.0.12.zip"
+        CF_SLUG: "all-the-mods-10"
+        CF_FILE_ID: "5969784"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=6 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:

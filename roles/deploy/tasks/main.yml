@@ -23,7 +23,7 @@
     - name: "{{ deployment }}"
       size: 10Gi
     - name: "{{ deployment }}-world"
-      size: 5Gi
+      size: 10Gi
     - name: "{{ deployment }}-save"
       size: 5Gi
   kubernetes.core.k8s:
@@ -42,6 +42,7 @@
 
 - name: Create RCON Secret
   no_log: true
+  register: rconSecret
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -53,11 +54,27 @@
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
 
+- name: Create API KEY Secret
+  no_log: true
+  register: apiKeySecret
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "cf-api-key"
+        namespace: "{{ namespace }}"
+      type: Opaque
+      data:
+        key: "{{ cf_api_key | b64encode }}"
+
 - name: Create Environment ConfigMap
+  register: envConfigMap_cm
   kubernetes.core.k8s:
     definition: "{{ envConfigMap | to_yaml }}"
 
 - name: Create ops.json ConfigMap
+  register: ops_json_cm
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -74,6 +91,7 @@
 
 
 - name: Create StatefulSet
+  register: statefulset
   kubernetes.core.k8s:
     apply: yes
     definition:
@@ -142,11 +160,11 @@
                     mountPath: /data/save
                 resources:
                   requests:
-                    memory: "8Gi"
-                    cpu: "1500m"
+                    memory: "16Gi"
+                    cpu: "2000m"
                   limits:
                     memory: "24Gi"
-                    cpu: "5500m"
+                    cpu: "6000m"
                 envFrom:
                   - configMapRef:
                       name: "{{ deployment }}-env-{{ version }}"
@@ -156,6 +174,11 @@
                       secretKeyRef:
                         name: "{{ deployment }}-rcon-{{ version }}"
                         key: password
+                  - name: CF_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: cf-api-key
+                        key: key
                 livenessProbe:
                   exec:
                     command:
@@ -189,16 +212,16 @@
                   - containerPort: 9150
                 resources:
                   requests:
-                    memory: "64Mi"
-                    cpu: "50m"
+                    memory: "16Mi"
+                    cpu: "100m"
                   limits:
-                    memory: "512Mi"
+                    memory: "128Mi"
                     cpu: "500m"
                 env:
                   - name: MC_WORLD
                     value: /data/world
                   - name: MC_MOD_SERVER_STATS
-                    value: fabric
+                    value: "{{ server_stats }}"
                   - name: MC_RCON_ADDRESS
                     value: ":25575"
                   - name: MC_RCON_PASSWORD
@@ -236,9 +259,9 @@
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
 
-- name: Wait 30 seconds for old pods to start terminating
-  pause:
-    seconds: 30
+- name: Force restart of StatefulSet
+  when: statefulset.changed or envConfigMap_cm.changed or ops_json_cm.changed or rconSecret.changed
+  ansible.builtin.shell: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}"; sleep 30
 
 - name: Wait for StatefulSet to be ready
   kubernetes.core.k8s_info:
