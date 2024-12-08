@@ -23,7 +23,7 @@
     - name: "{{ deployment }}"
       size: 10Gi
     - name: "{{ deployment }}-world"
-      size: 5Gi
+      size: 10Gi
     - name: "{{ deployment }}-save"
       size: 5Gi
   kubernetes.core.k8s:
@@ -53,6 +53,20 @@
       type: Opaque
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
+
+- name: Create API KEY Secret
+  no_log: true
+  register: apiKeySecret
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "cf-api-key"
+        namespace: "{{ namespace }}"
+      type: Opaque
+      data:
+        key: "{{ cf_api_key | b64encode }}"
 
 - name: Create Environment ConfigMap
   register: envConfigMap_cm
@@ -160,6 +174,11 @@
                       secretKeyRef:
                         name: "{{ deployment }}-rcon-{{ version }}"
                         key: password
+                  - name: CF_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: cf-api-key
+                        key: key
                 livenessProbe:
                   exec:
                     command:
@@ -202,7 +221,7 @@
                   - name: MC_WORLD
                     value: /data/world
                   - name: MC_MOD_SERVER_STATS
-                    value: fabric
+                    value: "{{ server_stats }}"
                   - name: MC_RCON_ADDRESS
                     value: ":25575"
                   - name: MC_RCON_PASSWORD
