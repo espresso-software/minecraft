@@ -53,7 +53,7 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "AUTO_CURSEFORGE"
+        TYPE: "CURSEFORGE"
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
         MOTD: "Skyfactory 5 {{ version }}"
