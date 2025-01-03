@@ -25,7 +25,7 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
-    deployment: "skyfafctory-5"
+    deployment: "skyfactory-5"
     itzg_tag: "java21"
     namespace: "minecraft"
     version: "5.0.2"
