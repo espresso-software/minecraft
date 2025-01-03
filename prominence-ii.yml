@@ -28,7 +28,7 @@
     deployment: "prominence-ii"
     namespace: "minecraft"
     itzg_tag: "java17"
-    version: "3.0.21"
+    version: "v3.0.21"
     server_stats: "fabric"
     ops_json:
       [
@@ -61,7 +61,7 @@
         MOTD: "Prominence II v{{version}}"
         RCON_CMDS_STARTUP: "gamerule doFireTick false"
         MAX_PLAYERS: "30"
-        INIT_MEMORY: "16G"
+        INIT_MEMORY: "8G"
         MAX_MEMORY: "16G"
         CF_BASE_DIR: "/data"
         CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5981/375/Prominence_II_RPG_Server_Pack_v3.0.21.zip"
