@@ -28,7 +28,7 @@
     deployment: "prominence-ii"
     namespace: "minecraft"
     itzg_tag: "java17"
-    version: "3.0.21"
+    version: "v3.0.21"
     server_stats: "fabric"
     ops_json:
       [
