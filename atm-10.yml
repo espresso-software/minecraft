@@ -62,7 +62,7 @@
           gamerule doFireTick false
           gamerule doInsomnia false
         LEVEL_TYPE: "minecraft:amplified"
-        INIT_MEMORY: "16G"
+        INIT_MEMORY: "8G"
         MAX_MEMORY: "16G"
         CF_SLUG: "all-the-mods-10"
         CF_FILE_ID: "5969784"
