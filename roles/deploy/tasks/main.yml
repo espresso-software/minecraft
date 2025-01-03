@@ -185,8 +185,8 @@
                     command:
                       - mc-health
                   initialDelaySeconds: 30
-                  periodSeconds: 5
-                  failureThreshold: 20
+                  periodSeconds: 15
+                  failureThreshold: 3
                   successThreshold: 1
                   timeoutSeconds: 1
                 readinessProbe:
@@ -194,8 +194,8 @@
                     command:
                       - mc-health
                   initialDelaySeconds: 30
-                  periodSeconds: 5
-                  failureThreshold: 20
+                  periodSeconds: 15
+                  failureThreshold: 3
                   successThreshold: 1
                   timeoutSeconds: 1
                 startupProbe:
@@ -204,7 +204,7 @@
                       - mc-health
                   initialDelaySeconds: 30
                   periodSeconds: 10
-                  failureThreshold: 100
+                  failureThreshold: 600
                   successThreshold: 1
                   timeoutSeconds: 1
               - name: minecraft-exporter
