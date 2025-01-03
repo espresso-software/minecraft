@@ -164,7 +164,7 @@
                     memory: "{{ (envConfigMap.data.INIT_MEMORY | default('1') | split('G') | first | int + 1) }}G"
                     cpu: "2000m" #TODO: read from variable
                   limits:
-                    memory: "{{ (envConfigMap.data.MAX_MEMORY | default('4') | split('G') | first | int + 2) }}G"
+                    memory: "{{ (envConfigMap.data.MAX_MEMORY | default('4') | split('G') | first | int + 4) }}G"
                     cpu: "6000m" #TODO: read from variable
                 envFrom:
                   - configMapRef:
