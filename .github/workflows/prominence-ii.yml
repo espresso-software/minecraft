@@ -50,7 +50,7 @@ jobs:
           elif [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
             ip_address="101"
           elif [ "${{ github.event.inputs.modpack }}" == "skyfactory-5" ]; then
-            ip_address="102"
+            ip_address="102 --extra-vars \"minecraft_port=24565\""
           fi
           echo "::set-output name=network_address::${ip_address}"
 
