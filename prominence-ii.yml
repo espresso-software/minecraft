@@ -28,7 +28,7 @@
     deployment: "prominence-ii"
     namespace: "minecraft"
     itzg_tag: "java17"
-    version: "3.0.20hf"
+    version: "3.0.21"
     server_stats: "fabric"
     ops_json:
       [
@@ -64,7 +64,7 @@
         INIT_MEMORY: "16G"
         MAX_MEMORY: "16G"
         CF_BASE_DIR: "/data"
-        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5942/89/Prominence_II_RPG_Server_Pack_v3.0.20hf.zip"
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5981/375/Prominence_II_RPG_Server_Pack_v3.0.21.zip"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=6 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
