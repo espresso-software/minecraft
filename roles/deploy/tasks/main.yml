@@ -290,7 +290,7 @@
           app: "{{ deployment }}"
         ports:
           - protocol: TCP
-            port: "{{ minecraft_port | default (25565) }}"
+            port: 25565
             targetPort: 25565
         type: LoadBalancer
         externalTrafficPolicy: Local

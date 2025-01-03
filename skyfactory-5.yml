@@ -11,9 +11,9 @@
       community.general.ufw:
         rule: allow
         dest: "{{ network.identifier }}.{{ network_address }}"
-        port: "{{ minecraft_port | default(25565) }}"
+        port: 25565
         proto: tcp
-        comment: "minecraft server {{ minecraft_port | default(25565) }}"
+        comment: "minecraft server"
 
 - name: 
   hosts:
