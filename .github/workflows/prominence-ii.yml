@@ -18,6 +18,7 @@ on:
         type: choice
         options:
           - prominence-ii
+          - skyfactory-5
           - atm-10
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -39,6 +40,7 @@ jobs:
         run: |
           echo "${{ secrets.VAULT_DECRYPT_TOKEN }}" > /tmp/vault_pass
 
+      #TODO: use the same ip for all minecraft servers
       - name: Determine IP address
         id: ip
         run: |
@@ -47,6 +49,8 @@ jobs:
             ip_address="100"
           elif [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
             ip_address="101"
+          elif [ "${{ github.event.inputs.modpack }}" == "skyfactory-5" ]; then
+            ip_address="102"
           fi
           echo "::set-output name=network_address::${ip_address}"
 

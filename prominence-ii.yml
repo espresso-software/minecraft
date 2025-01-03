@@ -58,7 +58,7 @@
         VERSION: "1.20.1"
         SEED: "-5322780995844550520"
         ALLOW_FLIGHT: "TRUE"
-        MOTD: "Prominence II v3.0.12"
+        MOTD: "Prominence II v{{version}}"
         RCON_CMDS_STARTUP: "gamerule doFireTick false"
         MAX_PLAYERS: "30"
         INIT_MEMORY: "16G"

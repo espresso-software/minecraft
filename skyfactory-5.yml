@@ -25,10 +25,10 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
-    deployment: "atm-10"
+    deployment: "skyfactory-5"
     itzg_tag: "java21"
     namespace: "minecraft"
-    version: "2.3"
+    version: "5.0.2"
     server_stats: "forge"
     ops_json:
       [
@@ -53,20 +53,17 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "AUTO_CURSEFORGE"
-        SEED: "oHgqCdJVwxDgBUWGzyxMA4FPDGWXeb2na9CCvBmmqKPk24ewymZWHeHdVZd4c3jp"
+        TYPE: "CURSEFORGE"
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
-        MOTD: "All The Mods 10 {{ version }}"
+        MOTD: "Skyfactory 5 {{ version }}"
         RCON_CMDS_STARTUP: |
-          gamerule doFireTick false
           gamerule doInsomnia false
-        LEVEL_TYPE: "minecraft:amplified"
-        INIT_MEMORY: "8G"
-        MAX_MEMORY: "16G"
-        CF_SLUG: "all-the-mods-10"
-        CF_FILE_ID: "5984002"
-        JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=6 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
+        INIT_MEMORY: "6G"
+        MAX_MEMORY: "12G"
+        CF_BASE_DIR: /data
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/6044/657/SkyFactory_5_Server_5.0.2.zip" # Pins to specific version
+        JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=4 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
     - deploy

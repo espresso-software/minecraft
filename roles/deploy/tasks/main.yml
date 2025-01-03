@@ -161,11 +161,11 @@
                     mountPath: /data/save
                 resources:
                   requests:
-                    memory: "16Gi"
-                    cpu: "2000m"
+                    memory: "{{ (envConfigMap.data.INIT_MEMORY | default('1') | split('G') | first | int + 1) }}G"
+                    cpu: "2000m" #TODO: read from variable
                   limits:
-                    memory: "24Gi"
-                    cpu: "6000m"
+                    memory: "{{ (envConfigMap.data.MAX_MEMORY | default('4') | split('G') | first | int + 2) }}G"
+                    cpu: "6000m" #TODO: read from variable
                 envFrom:
                   - configMapRef:
                       name: "{{ deployment }}-env-{{ version }}"
@@ -213,10 +213,10 @@
                   - containerPort: 9150
                 resources:
                   requests:
-                    memory: "16Mi"
+                    memory: "16M"
                     cpu: "100m"
                   limits:
-                    memory: "128Mi"
+                    memory: "128M"
                     cpu: "500m"
                 env:
                   - name: MC_WORLD
@@ -284,6 +284,7 @@
         namespace: "{{ namespace }}"
         annotations:
           metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
+          metallb.universe.tf/allow-shared-ip: "minecraft"
       spec:
         selector:
           app: "{{ deployment }}"
