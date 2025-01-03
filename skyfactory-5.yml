@@ -61,8 +61,8 @@
           gamerule doInsomnia false
         INIT_MEMORY: "6G"
         MAX_MEMORY: "12G"
-        CF_SLUG: "skyfactory-5"
-        CF_FILE_ID: "6044634" # Pins to specific version
+        CF_BASE_DIR: /data
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/6044/657/SkyFactory_5_Server_5.0.2.zip" # Pins to specific version
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=4 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
