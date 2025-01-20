@@ -100,16 +100,7 @@
           - Ingress
           - Egress
         ingress:
-          - ports:
-              - protocol: TCP
-                port: 25565
-          - from:
-              - podSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: prometheus
-            ports:
-              - protocol: TCP
-                port: 9150
+          - {}
         egress:
           - {}
 
