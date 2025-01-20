@@ -180,6 +180,8 @@
                       secretKeyRef:
                         name: cf-api-key
                         key: key
+                  - name: PROXY
+                    value: "{{ network.proxy }}"
                 livenessProbe:
                   exec:
                     command:
