@@ -127,7 +127,7 @@
                   cidr: "{{ network.proxy | split(':') | first  }}/32"
             ports:
               - protocol: TCP
-                port: {{ network.proxy | split(':') | last }}
+                port: "{{ network.proxy | split(':') | last | int }}"
 
 - name: Create StatefulSet
   register: statefulset
