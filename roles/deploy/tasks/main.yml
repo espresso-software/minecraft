@@ -124,10 +124,10 @@
                     app: kube-dns
           - to:
               - ipBlock:
-                  cidr: "{{ network.proxy | split(':')[0] }}/32"
+                  cidr: "{{ network.proxy | split(':') | first  }}/32"
             ports:
               - protocol: TCP
-                port: "{{ network.proxy | split(':')[1] }}"
+                port: "{{ network.proxy | split(':') | last }}"
 
 - name: Create StatefulSet
   register: statefulset
