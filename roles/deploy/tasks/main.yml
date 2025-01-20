@@ -100,9 +100,34 @@
           - Ingress
           - Egress
         ingress:
-          - {}
+          - ports:
+              - protocol: TCP
+                port: 25565
+          - from:
+              - podSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: prometheus
+            ports:
+              - protocol: TCP
+                port: 9150
         egress:
-          - {}
+          - ports:
+              - protocol: TCP
+                port: 53
+              - protocol: UDP
+                port: 53
+              - protocol: TCP
+                port: 443
+          - to:
+              - podSelector:
+                  matchLabels:
+                    app: kube-dns
+          - to:
+              - ipBlock:
+                  cidr: "{{ network.proxy | split(':')[0] }}/32"
+            ports:
+              - protocol: TCP
+                port: "{{ network.proxy | split(':')[1] }}"
 
 - name: Create StatefulSet
   register: statefulset
@@ -193,6 +218,8 @@
                       secretKeyRef:
                         name: cf-api-key
                         key: key
+                  - name: PROXY
+                    value: "{{ network.proxy }}"
                 livenessProbe:
                   exec:
                     command:
