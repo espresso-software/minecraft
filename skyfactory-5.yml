@@ -28,7 +28,7 @@
     deployment: "skyfactory-5"
     itzg_tag: "java21"
     namespace: "minecraft"
-    version: "5.0.2"
+    version: "5.0.5"
     server_stats: "forge"
     ops_json:
       [
@@ -62,7 +62,7 @@
         INIT_MEMORY: "6G"
         MAX_MEMORY: "12G"
         CF_BASE_DIR: /data
-        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/6044/657/SkyFactory_5_Server_5.0.2.zip" # Pins to specific version
+        CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/6085/658/SkyFactory_5_Server_5.0.5.zip" # Pins to specific version
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=4 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
