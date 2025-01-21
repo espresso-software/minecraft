@@ -86,48 +86,48 @@
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
-- name: Create Network Policy
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: networking.k8s.io/v1
-      kind: NetworkPolicy
-      metadata:
-        name: "default-minecraft-allow"
-        namespace: "{{ namespace }}"
-      spec:
-        podSelector: {} 
-        policyTypes:
-          - Ingress
-          - Egress
-        ingress:
-          - ports:
-              - protocol: TCP
-                port: 25565
-          - from:
-              - podSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: prometheus
-            ports:
-              - protocol: TCP
-                port: 9150
-        egress:
-          - ports:
-              - protocol: TCP
-                port: 53
-              - protocol: UDP
-                port: 53
-              - protocol: TCP
-                port: 443
-          - to:
-              - podSelector:
-                  matchLabels:
-                    app: kube-dns
-          - to:
-              - ipBlock:
-                  cidr: "{{ network.proxy | split(':') | first  }}/32"
-            ports:
-              - protocol: TCP
-                port: 3128
+# - name: Create Network Policy
+#   kubernetes.core.k8s:
+#     definition:
+#       apiVersion: networking.k8s.io/v1
+#       kind: NetworkPolicy
+#       metadata:
+#         name: "default-minecraft-allow"
+#         namespace: "{{ namespace }}"
+#       spec:
+#         podSelector: {} 
+#         policyTypes:
+#           - Ingress
+#           - Egress
+#         ingress:
+#           - ports:
+#               - protocol: TCP
+#                 port: 25565
+#           - from:
+#               - podSelector:
+#                   matchLabels:
+#                     app.kubernetes.io/name: prometheus
+#             ports:
+#               - protocol: TCP
+#                 port: 9150
+#         egress:
+#           - ports:
+#               - protocol: TCP
+#                 port: 53
+#               - protocol: UDP
+#                 port: 53
+#               - protocol: TCP
+#                 port: 443
+#           - to:
+#               - podSelector:
+#                   matchLabels:
+#                     app: kube-dns
+#           - to:
+#               - ipBlock:
+#                   cidr: "{{ network.proxy | split(':') | first  }}/32"
+#             ports:
+#               - protocol: TCP
+#                 port: 3128
 
 - name: Create StatefulSet
   register: statefulset
@@ -220,6 +220,10 @@
                         key: key
                   - name: PROXY
                     value: "{{ network.proxy }}"
+                dnsConfig:
+                  nameservers:
+                  - 1.1.1.1
+                  - 1.0.0.1
                 livenessProbe:
                   exec:
                     command:
