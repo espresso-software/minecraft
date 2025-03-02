@@ -25,8 +25,9 @@
       metadata:
         name: "{{ item.name }}"
         namespace: "{{ namespace }}"
-        game: minecraft
-        app: "{{ deployment }}"
+        labels:
+          game: minecraft
+          app: "{{ deployment }}"
       spec:
         accessModes:
           - ReadWriteOnce
@@ -44,8 +45,9 @@
       metadata:
         name: "{{ deployment }}-rcon-{{ version }}"
         namespace: "{{ namespace }}"
-        game: minecraft
-        app: "{{ deployment }}"
+        labels:
+          game: minecraft
+          app: "{{ deployment }}"
       type: Opaque
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
@@ -60,7 +62,8 @@
       metadata:
         name: "cf-api-key"
         namespace: "{{ namespace }}"
-        game: minecraft
+        labels:
+          game: minecraft
       type: Opaque
       data:
         key: "{{ cf_api_key | b64encode }}"
@@ -79,8 +82,9 @@
       metadata:
         name: "{{ deployment }}-ops-{{ version }}"
         namespace: "{{ namespace }}"
-        game: minecraft
-        app: "{{ deployment }}"
+        labels:
+          game: minecraft
+          app: "{{ deployment }}"
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
@@ -92,7 +96,8 @@
       metadata:
         name: "default-minecraft-allow"
         namespace: "{{ namespace }}"
-        game: minecraft
+        labels:
+          game: minecraft
       spec:
         selector: "game == 'minecraft'"
         order: 1000
@@ -142,9 +147,10 @@
       metadata:
         name: "{{ deployment }}"
         namespace: "{{ namespace }}"
-        game: minecraft
-        app: "{{ deployment }}"
-        version: "{{ version }}"
+        labels:
+          game: minecraft
+          app: "{{ deployment }}"
+          version: "{{ version }}"
       spec:
         replicas: 1
         selector:
