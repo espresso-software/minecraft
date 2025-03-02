@@ -56,7 +56,7 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "CURSEFORGE"
+        TYPE: "AUTO_CURSEFORGE"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
