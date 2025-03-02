@@ -29,7 +29,7 @@
     deployment: "gtnh"
     itzg_tag: "java21"
     namespace: "minecraft"
-    version: "2.7.2-qf"
+    version: "v2.7.2-qf"
     min_cpu: 2
     max_cpu: 6
     min_ram: "8G"
