@@ -5,9 +5,6 @@ name: Deploy Modpack
 # Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
-  push:
-    branches:
-      - feature/gt-new-horizons
   workflow_dispatch:
     inputs:
       tags:
