@@ -10,7 +10,7 @@
     - name: Open minecraft Ports
       community.general.ufw:
         rule: allow
-        dest: "{{ network.identifier }}.{{ network_address }}"
+        dest: "{{ network.identifier }}.3.100"
         port: 25565
         proto: tcp
         comment: "minecraft server - gtnh"
@@ -25,6 +25,7 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
+    network_address: "{{ network.identifier }}.3.100"
     deployment: "gtnh"
     itzg_tag: "java21"
     namespace: "minecraft"
@@ -38,6 +39,7 @@
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
+    svc_port: 25565
     ops_json:
       [
         {
@@ -64,8 +66,8 @@
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
-        # CF_SLUG: "gt-new-horizons"
-        # CF_FILE_ID: "6052998"
+        CF_SLUG: "gt-new-horizons"
+        CF_FILE_ID: "6052998"
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
