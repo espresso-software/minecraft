@@ -29,8 +29,8 @@
     itzg_tag: "java21"
     namespace: "minecraft"
     version: "2.7.2-qf"
-    min_cpu: "2"
-    max_cpu: "6"
+    min_cpu: 2
+    max_cpu: 6
     min_ram: "8G"
     max_ram: "16G"
     world_size: "20Gi"
