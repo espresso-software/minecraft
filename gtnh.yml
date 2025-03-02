@@ -28,7 +28,7 @@
     deployment: "gtnh"
     itzg_tag: "java21"
     namespace: "minecraft"
-    version: "2.7.2-QF"
+    version: "2.7.2-qf"
     min_cpu: "2"
     max_cpu: "6"
     min_ram: "8G"
@@ -37,7 +37,6 @@
     etc_size: "5Gi"
     save_size: "5Gi"
     mods_size: "5Gi"
-    pod_port: 25565
     # server_stats: "SERVER_STATS"
     ops_json:
       [
