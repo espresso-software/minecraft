@@ -165,6 +165,7 @@
             labels:
               app: "{{ deployment }}"
               version: "{{ version }}"
+              game: minecraft
           spec:
             nodeSelector:
               kubernetes.io/role: gamer
