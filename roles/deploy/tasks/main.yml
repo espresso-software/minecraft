@@ -6,6 +6,7 @@
       kind: Namespace
       metadata:
         name: "{{ namespace }}"
+        
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
   with_items:
