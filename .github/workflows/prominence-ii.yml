@@ -47,13 +47,13 @@ jobs:
         run: |
           extra_vars=""
           if [ "${{ github.event.inputs.modpack }}" == "gtnh" ]; then
-            extra_vars="--extra-vars svc_port=25565"
+            extra_vars="--extra-vars \"svc_port=25565\""
           elif [ "${{ github.event.inputs.modpack }}" == "prominence-ii" ]; then
-            extra_vars="--extra-vars svc_port=25566"
+            extra_vars="--extra-vars \"svc_port=25566\""
           elif [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
-            extra_vars="--extra-vars svc_port=25567"
+            extra_vars="--extra-vars \"svc_port=25567\""
           elif [ "${{ github.event.inputs.modpack }}" == "skyfactory-5" ]; then
-            extra_vars="--extra-vars svc_port=25568"
+            extra_vars="--extra-vars \"svc_port=25568\""
           fi
           echo "::set-output name=extra_vars::${extra_vars}"
 

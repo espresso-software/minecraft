@@ -38,7 +38,6 @@
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
-    # server_stats: "SERVER_STATS"
     ops_json:
       [
         {
