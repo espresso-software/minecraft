@@ -196,10 +196,10 @@
                 resources:
                   requests:
                     memory: "{{ envConfigMap.data.MAX_MEMORY }}"
-                    cpu: "{{ (min_cpu | float * 1.5 ) | round(0, 'ciel') }}000m"
+                    cpu: "{{ (min_cpu | float * 1.5 ) | round(0, 'ceil') }}000m"
                   limits:
-                    memory: "{{ (((envConfigMap.data.MAX_MEMORY split('G')) | float) * 1.5) | round(0, 'ciel') }}G"
-                    cpu: "{{ (max_cpu | float * 1.5 ) | round(0, 'ciel') }}000m"
+                    memory: "{{ (((envConfigMap.data.MAX_MEMORY split('G')) | float) * 1.5) | round(0, 'ceil') }}G"
+                    cpu: "{{ (max_cpu | float * 1.5 ) | round(0, 'ceil') }}000m"
                 envFrom:
                   - configMapRef:
                       name: "{{ deployment }}-env-{{ version }}"
