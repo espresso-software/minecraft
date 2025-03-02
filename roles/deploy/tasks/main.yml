@@ -22,11 +22,13 @@
   failed_when: false # ignore failure if PVC already exists
   with_items:
     - name: "{{ deployment }}"
-      size: 10Gi
+      size: "{{ etc_size }}"
     - name: "{{ deployment }}-world"
-      size: 10Gi
+      size: "{{ world_size }}"
     - name: "{{ deployment }}-save"
-      size: 5Gi
+      size: "{{ save_size }}"
+    - name: "{{ deployment }}-mods"
+      size: "{{ mods_size }}"
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -41,7 +43,17 @@
           requests:
             storage: "{{ item.size }}"
 
+- name: Check if RCON Secret Exists
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    namespace: "{{ namespace }}"
+    name: "{{ deployment }}-rcon-{{ version }}"
+  register: rconSecret_info
+  failed_when: false
+
 - name: Create RCON Secret
+  when: rconSecret_info == {}
   no_log: true
   register: rconSecret
   kubernetes.core.k8s:
@@ -86,56 +98,60 @@
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
-# - name: Create Network Policy
-#   kubernetes.core.k8s:
-#     definition:
-#       apiVersion: networking.k8s.io/v1
-#       kind: NetworkPolicy
-#       metadata:
-#         name: "default-minecraft-allow"
-#         namespace: "{{ namespace }}"
-#       spec:
-#         podSelector: {} 
-#         policyTypes:
-#           - Ingress
-#           - Egress
-#         ingress:
-#           - ports:
-#               - protocol: TCP
-#                 port: 25565
-#           - from:
-#               - podSelector:
-#                   matchLabels:
-#                     app.kubernetes.io/name: prometheus
-#             ports:
-#               - protocol: TCP
-#                 port: 9150
-#         egress:
-#           - ports:
-#               - protocol: TCP
-#                 port: 53
-#               - protocol: UDP
-#                 port: 53
-#               - protocol: TCP
-#                 port: 443
-#           - to:
-#               - podSelector:
-#                   matchLabels:
-#                     app: kube-dns
-#           - to:
-#               - ipBlock:
-#                   cidr: "{{ network.proxy | split(':') | first  }}/32"
-#             ports:
-#               - protocol: TCP
-#                 port: 3128
+- name: Create Calico Network Policy
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: projectcalico.org/v3
+      kind: GlobalNetworkPolicy
+      metadata:
+        name: "default-minecraft-allow"
+        namespace: "{{ namespace }}"
+      spec:
+        selector: "game == 'minecraft'"
+        order: 1000
+        types:
+          - Ingress
+          - Egress
+        ingress:
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 25565
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 9150
+            source:
+              namespaceSelector: "app.kubernetes.io/name == 'prometheus'"
+        egress:
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 53
+                - 443
+          - action: Allow
+            protocol: UDP
+            destination:
+              ports:
+                - 53
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 3128
+              nets:
+                - "{{ network.proxy | split(':') | first  }}/32"
 
-- name: Create StatefulSet
-  register: statefulset
+- name: Create Deployment
+  register: deployment
   kubernetes.core.k8s:
     apply: yes
     definition:
       apiVersion: apps/v1
-      kind: StatefulSet
+      kind: Deployment
       metadata:
         name: "{{ deployment }}"
         namespace: "{{ namespace }}"
@@ -144,6 +160,7 @@
         selector:
           matchLabels:
             app: "{{ deployment }}"
+            game: minecraft
         strategy:
           type: Recreate
         template:
@@ -199,11 +216,11 @@
                     mountPath: /data/save
                 resources:
                   requests:
-                    memory: "{{ (envConfigMap.data.INIT_MEMORY | default('1') | split('G') | first | int + 1) }}G"
-                    cpu: "2000m" #TODO: read from variable
+                    memory: "{{ ((envConfigMap.data.INIT_MEMORY) * 1.5) | round(0, 'ciel') }}G"
+                    cpu: "{{ (min_cpu * 1.5 ) | round(0, 'ciel') }}000m"
                   limits:
-                    memory: "{{ (envConfigMap.data.MAX_MEMORY | default('4') | split('G') | first | int + 4) }}G"
-                    cpu: "6000m" #TODO: read from variable
+                    memory: "{{ ((envConfigMap.data.MAX_MEMORY split('G')) * 1.5) | round(0, 'ciel') }}G"
+                    cpu: "{{ (max_cpu * 1.5 ) | round(0, 'ciel') }}000m"
                 envFrom:
                   - configMapRef:
                       name: "{{ deployment }}-env-{{ version }}"
@@ -294,6 +311,9 @@
               - name: "{{ deployment }}"
                 persistentVolumeClaim:
                   claimName: "{{ deployment }}"
+              - name: "{{ deployment }}-mods"
+                persistentVolumeClaim:
+                  claimName: "{{ deployment }}-mods"
               - name: "{{ deployment }}-world"
                 persistentVolumeClaim:
                   claimName: "{{ deployment }}-world"
@@ -304,18 +324,15 @@
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
 
-- name: Force restart of StatefulSet
-  when: statefulset.changed or envConfigMap_cm.changed or ops_json_cm.changed or rconSecret.changed
-  ansible.builtin.shell: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}"; sleep 30
-
-- name: Wait for StatefulSet to be ready
+- name: Wait for Deployment to be Ready
   kubernetes.core.k8s_info:
-    kind: StatefulSet
+    api_version: apps/v1
+    kind: Deployment
     namespace: "{{ namespace }}"
     name: "{{ deployment }}"
-  register: statefulset_info
-  until: statefulset_info.resources[0].status.availableReplicas == 1
-  retries: 30
+  register: deployment_info
+  until: deployment_info.resources[0].status.readyReplicas == 1
+  retries: 60
   delay: 10
 
 - name: Create Server Service
@@ -334,7 +351,7 @@
           app: "{{ deployment }}"
         ports:
           - protocol: TCP
-            port: 25565
+            port: "{{ pod_port }}"
             targetPort: 25565
         type: LoadBalancer
         externalTrafficPolicy: Local

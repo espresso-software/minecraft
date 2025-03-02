@@ -1,0 +1,75 @@
+---
+#TODO: change from UFW to physical firewall device
+- name: Open Firewall Ports
+  become: true
+  hosts:
+    - k3s
+  tags:
+    - firewall
+  tasks:
+    - name: Open minecraft Ports
+      community.general.ufw:
+        rule: allow
+        dest: "{{ network.identifier }}.{{ network_address }}"
+        port: 25565
+        proto: tcp
+        comment: "minecraft server - gtnh"
+
+- name: 
+  hosts:
+    - k3s_managers
+  run_once: true
+  tags:
+    - server
+  environment:
+    KUBECONFIG: "{{ kube_config_path }}"
+  become: true
+  vars:
+    deployment: "gtnh"
+    itzg_tag: "java21"
+    namespace: "minecraft"
+    version: "2.7.2-QF"
+    min_cpu: "2"
+    max_cpu: "6"
+    min_ram: "8G"
+    max_ram: "16G"
+    world_size: "20Gi"
+    etc_size: "5Gi"
+    save_size: "5Gi"
+    mods_size: "5Gi"
+    pod_port: 25565
+    # server_stats: "SERVER_STATS"
+    ops_json:
+      [
+        {
+          "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
+          "name": "queen_of_wands",
+          "level": 4,
+          "bypassesPlayerLimit": true
+        }
+      ]
+    envConfigMap:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ deployment }}-env-{{ version }}"
+        namespace: "{{ namespace }}"
+      data:
+        EULA: "true"
+        TYPE: "AUTOCURSEFORGE"
+        # SEED: ""
+        SPAWN_PROTECTION: "0"
+        ALLOW_FLIGHT: "TRUE"
+        MOTD: "{{ deployment }} {{ version }}"
+        RCON_CMDS_STARTUP: gamerule doInsomnia false
+        #  gamrule doFireTick false
+        INIT_MEMORY: "{{ min_ram }}"
+        MAX_MEMORY: "{{ max_ram }}"
+        # CF_SLUG: "gt-new-horizons"
+        # CF_FILE_ID: "6052998"
+        # CF_BASE_DIR: "/data"
+        # CF_SERVER_MOD: ""
+        JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads={{ (min_cpu * 2) | round(0, 'ceil') }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
+        USE_AIKAR_FLAGS: "FALSE"
+  roles:
+    - deploy
