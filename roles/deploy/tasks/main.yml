@@ -31,17 +31,7 @@
           requests:
             storage: "{{ item.size }}"
 
-- name: Check if RCON Secret Exists
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Secret
-    namespace: "{{ namespace }}"
-    name: "{{ deployment }}-rcon-{{ version }}"
-  register: rconSecret_info
-  failed_when: false
-
 - name: Create RCON Secret
-  when: rconSecret_info == {}
   no_log: true
   register: rconSecret
   kubernetes.core.k8s:
