@@ -1,23 +1,4 @@
 ---
-- name: Create Storage Class
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: v1
-      kind: StorageClass
-      metadata:
-        name: minecraft
-        labels:
-          name: minecraft
-          namespace: "{{ namespace }}"
-      provisioner: driver.longhorn.io
-      allowVolumeExpansion: true
-      parameters:
-        numberOfReplicas: "3"
-        staleReplicaTimeout: "2880"
-        dataLocality: "best-effort"
-        replicaAutoBalancing: "best-effort"
-        fromBackup: ""
-
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
   with_items:
@@ -27,7 +8,7 @@
       size: "{{ world_size }}"
     - name: "{{ deployment }}-save"
       size: "{{ save_size }}"
-    - name: "{{ deployment }}-mods"
+    - name: "{{ deployment }}-mods-{{ version }}"
       size: "{{ mods_size }}"
   kubernetes.core.k8s:
     definition:
@@ -67,7 +48,7 @@
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
 
-- name: Create API KEY Secret
+- name: Update API KEY Secret
   no_log: true
   register: apiKeySecret
   kubernetes.core.k8s:
@@ -313,7 +294,7 @@
                   claimName: "{{ deployment }}"
               - name: "{{ deployment }}-mods"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-mods"
+                  claimName: "{{ deployment }}-mods-{{ version }}"
               - name: "{{ deployment }}-world"
                 persistentVolumeClaim:
                   claimName: "{{ deployment }}-world"
@@ -351,7 +332,7 @@
           app: "{{ deployment }}"
         ports:
           - protocol: TCP
-            port: "{{ pod_port }}"
+            port: "{{ svc_port}}"
             targetPort: 25565
         type: LoadBalancer
         externalTrafficPolicy: Local
