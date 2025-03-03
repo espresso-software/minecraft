@@ -333,7 +333,7 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: "{{ deployment }}"
+        name: "minecraft-{{ svc_port }}"
         namespace: "{{ namespace }}"
         annotations:
           metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
