@@ -3,7 +3,7 @@
 - name: Open Firewall Ports
   become: true
   hosts:
-    - k3s
+    - gamers
   tags:
     - firewall
   tasks:
