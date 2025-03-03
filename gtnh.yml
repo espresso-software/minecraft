@@ -65,10 +65,10 @@
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
-        # CF_SLUG: ""
-        # CF_FILE_ID: ""
-        CF_BASE_DIR: "/data"
-        CF_SERVER_MOD: "https://downloads.gtnewhorizons.com/ServerPacks/GT_New_Horizons_2.7.3_Server_Java_8.zip"
+        CF_SLUG: "gt-new-horizons"
+        CF_FILE_ID: "6052998"
+        # CF_BASE_DIR: "/data"
+        # CF_SERVER_MOD: ""
         JVM_XX_OPTS: "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=15 -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
