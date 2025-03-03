@@ -39,6 +39,7 @@
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
+    svc_port: 25565
     ops_json:
       [
         {
