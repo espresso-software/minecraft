@@ -57,6 +57,7 @@
       data:
         EULA: "true"
         TYPE: "FORGE"
+        LOG_TIMESTAMP: "true"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"

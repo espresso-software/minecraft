@@ -215,6 +215,8 @@
                     mountPath: /data/world
                   - name: "{{ deployment }}-save"
                     mountPath: /data/save
+                  - name: "{{ deployment }}-mods"
+                    mountPath: /data/mods
                 resources:
                   requests:
                     memory: "{{ envConfigMap.data.MAX_MEMORY }}"
