@@ -27,7 +27,7 @@
   vars:
     network_address: "{{ network.identifier }}.3.100"
     deployment: "gtnh"
-    itzg_tag: "java8"
+    itzg_tag: "java21"
     namespace: "minecraft"
     version: "v2.7.2-qf"
     min_cpu: 2
@@ -56,7 +56,7 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "AUTO_CURSEFORGE"
+        TYPE: "CUSTOM"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
@@ -65,11 +65,16 @@
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
-        CF_SLUG: "gt-new-horizons"
-        CF_FILE_ID: "6052998"
+        # CF_SLUG: ""
+        # CF_FILE_ID: ""
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
-        JVM_XX_OPTS: "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=15 -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
+        GENERIC_PACKS: GT_New_Horizons_2.7.2_Server_Java_17-21
+        GENERIC_PACKS_SUFFIX: .zip
+        GENERIC_PACKS_PREFIX: https://downloads.gtnewhorizons.com/ServerPacks/
+        # if this isn't true, then the container tries to download the modpack every run
+        SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
+        JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
     - deploy
