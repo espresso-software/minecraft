@@ -1,4 +1,40 @@
 ---
+#     namespace: "games"
+#     server_stats: "forge"
+
+- name: Debug vars
+  debug:
+    msg: |
+      Deploying {{ deployment }} {{ version }} in {{ games }}
+        itzg image tag: {{ itzg_tag }}
+        Listening on: {{ network_address }}:{{ svc_port }}
+        Min CPU: {{ min_cpu }} Max CPU: {{ max_cpu }}
+        Min RAM: {{ min_ram }} Max RAM: {{ max_ram }}
+        Writeable Directories:
+          /data {{ etc_size }}
+           |- world {{ world_size }}
+           |- save {{ save_size }}
+           |- mods {{ mods_size }}
+
+  with_items:
+    - deployment
+    - version
+    - itzg_tag
+    - namespace
+    - version
+    - min_cpu
+    - max_cpu
+    - min_ram
+    - max_ram
+    - world_size
+    - etc_size
+    - save_size
+    - mods_size
+    - server_stats
+    - svc_port
+    - ops_json
+    - envConfigMap
+
 - name: Create Namespace
   kubernetes.core.k8s:
     definition:
@@ -6,6 +42,9 @@
       kind: Namespace
       metadata:
         name: "{{ namespace }}"
+        labels:
+          pod-security.kubernetes.io/warn: restricted
+          pod-security.kubernetes.io/warn-version: latest
         
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
@@ -175,6 +214,9 @@
             initContainers:
               - name: copy-ops
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 command:
                   - /bin/bash
                   - -c
@@ -187,6 +229,9 @@
                     mountPath: /tmp
               - name: check-update
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 command:
                   - /bin/bash
                   - -c
@@ -205,6 +250,9 @@
             containers:
               - name: "{{ deployment }}"
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 25565
@@ -217,6 +265,7 @@
                     mountPath: /data/save
                   - name: "{{ deployment }}-mods"
                     mountPath: /data/mods
+
                 resources:
                   requests:
                     memory: "{{ envConfigMap.data.MAX_MEMORY }}"
@@ -273,6 +322,9 @@
                   timeoutSeconds: 1
               - name: minecraft-exporter
                 image: "ghcr.io/dirien/minecraft-exporter:0.19.0"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 ports:
                   - containerPort: 9150
                 resources:
