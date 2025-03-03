@@ -335,10 +335,6 @@
       metadata:
         name: "{{ deployment }}"
         namespace: "{{ namespace }}"
-        labels:
-          game: minecraft
-          app: "{{ deployment }}"
-          version: "{{ version }}"
         annotations:
           metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
           metallb.universe.tf/allow-shared-ip: "minecraft"
@@ -363,10 +359,6 @@
       metadata:
         name: "{{ deployment }}-exporter"
         namespace: "{{ namespace }}"
-        labels:
-          game: minecraft
-          app: "{{ deployment }}"
-          version: "{{ version }}"
       spec:
         selector:
           app: "{{ deployment }}"
