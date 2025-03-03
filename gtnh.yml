@@ -28,7 +28,7 @@
     network_address: "{{ network.identifier }}.3.100"
     deployment: "gtnh"
     itzg_tag: "java21"
-    namespace: "minecraft"
+    namespace: "games"
     version: "v2.7.2-qf"
     min_cpu: 2
     max_cpu: 6
