@@ -332,7 +332,7 @@
     namespace: "{{ namespace }}"
     name: "{{ deployment }}"
   register: deployment_info
-  until: deployment_info.resources.status.readyReplicas == 1
+  until: deployment_info.status.readyReplicas == 1
   retries: 60
   delay: 10
 
