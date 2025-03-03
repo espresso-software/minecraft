@@ -265,7 +265,8 @@
                     mountPath: /data/save
                   - name: "{{ deployment }}-mods"
                     mountPath: /data/mods
-
+                  - name: "tmp"
+                    mountPath: /tmp
                 resources:
                   requests:
                     memory: "{{ envConfigMap.data.MAX_MEMORY }}"
@@ -378,6 +379,8 @@
               - name: "{{ deployment }}-ops"
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
+              - name: "tmp"
+                emptyDir: {}
 
 - name: Create Server Service
   kubernetes.core.k8s:
