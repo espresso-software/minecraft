@@ -63,7 +63,8 @@
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
         MOTD: "{{ deployment }} {{ version }}"
-        RCON_CMDS_STARTUP: gamerule doInsomnia false
+        # RCON_CMDS_STARTUP: |
+        #  gamerule doInsomnia false
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
