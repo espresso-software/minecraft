@@ -327,17 +327,6 @@
                 configMap:
                   name: "{{ deployment }}-ops-{{ version }}"
 
-- name: Wait for Deployment to be Ready
-  kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: Deployment
-    namespace: "{{ namespace }}"
-    name: "{{ deployment }}"
-  register: deployment
-  until: deployment.resources[0].status.readyReplicas == deployment.resources[0].status.replicas
-  retries: 60
-  delay: 10
-
 - name: Create Server Service
   kubernetes.core.k8s:
     definition:
@@ -386,3 +375,14 @@
             port: 80
             targetPort: 9150
         type: ClusterIP
+
+- name: Wait for Deployment to be Ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    namespace: "{{ namespace }}"
+    name: "{{ deployment }}"
+  register: deployment
+  until: deployment.resources[0].status.readyReplicas == deployment.resources[0].status.replicas
+  retries: 60
+  delay: 10
