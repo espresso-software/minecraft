@@ -397,7 +397,7 @@
           version: "{{ version }}"
         ports:
           - protocol: TCP
-            port: "{{ svc_port}}"
+            port: "{{ svc_port | int }}"
             targetPort: 25565
         type: LoadBalancer
         externalTrafficPolicy: Local
