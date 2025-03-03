@@ -333,8 +333,8 @@
     kind: Deployment
     namespace: "{{ namespace }}"
     name: "{{ deployment }}"
-  register: deployment_info
-  until: deployment_info.resources[0].status.readyReplicas == 1
+  register: deployment
+  until: deployment.resources[0].status.readyReplicas == deployment.resources[0].status.replicas
   retries: 60
   delay: 10
 
