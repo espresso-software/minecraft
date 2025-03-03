@@ -5,7 +5,7 @@
 - name: Debug vars
   debug:
     msg: |
-      Deploying {{ deployment }} {{ version }} in {{ games }}
+      Deploying {{ deployment }} {{ version }} in {{ namespace }}
         itzg image tag: {{ itzg_tag }}
         Listening on: {{ network_address }}:{{ svc_port }}
         Min CPU: {{ min_cpu }} Max CPU: {{ max_cpu }}
