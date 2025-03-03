@@ -56,7 +56,7 @@
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
-        TYPE: "CUSTOM"
+        TYPE: "FORGE"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
@@ -73,7 +73,7 @@
         GENERIC_PACKS_SUFFIX: .zip
         GENERIC_PACKS_PREFIX: https://downloads.gtnewhorizons.com/ServerPacks/
         # if this isn't true, then the container tries to download the modpack every run
-        SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
+        SKIP_GENERIC_PACK_UPDATE_CHECK: "false"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
