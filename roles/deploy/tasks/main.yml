@@ -16,25 +16,6 @@
            |- save {{ save_size }}
            |- mods {{ mods_size }}
 
-  with_items:
-    - deployment
-    - version
-    - itzg_tag
-    - namespace
-    - version
-    - min_cpu
-    - max_cpu
-    - min_ram
-    - max_ram
-    - world_size
-    - etc_size
-    - save_size
-    - mods_size
-    - server_stats
-    - svc_port
-    - ops_json
-    - envConfigMap
-
 - name: Create Namespace
   kubernetes.core.k8s:
     definition:
@@ -138,11 +119,7 @@
         labels:
           game: minecraft
       spec:
-        selector: "game == 'minecraft'"
-        order: 1000
-        types:
-          - Ingress
-          - Egress
+        selector: game == 'minecraft'
         ingress:
           - action: Allow
             protocol: TCP
@@ -155,26 +132,7 @@
               ports:
                 - 9150
             source:
-              namespaceSelector: "app.kubernetes.io/name == 'prometheus'"
-        egress:
-          - action: Allow
-            protocol: TCP
-            destination:
-              ports:
-                - 53
-                - 443
-          - action: Allow
-            protocol: UDP
-            destination:
-              ports:
-                - 53
-          - action: Allow
-            protocol: TCP
-            destination:
-              ports:
-                - 3128
-              nets:
-                - "{{ network.proxy | split(':') | first  }}/32"
+              namespaceSelector: app.kubernetes.io/name == 'prometheus'
 
 - name: Create Deployment
   register: deployment
