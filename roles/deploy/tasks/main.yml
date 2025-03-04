@@ -363,7 +363,7 @@
         ports:
           - name: minecraft
             protocol: TCP
-            port: "{{ svc_port | int }}"
+            port: {{ svc_port | int }}
             targetPort: minecraft
         type: LoadBalancer
         externalTrafficPolicy: Local
