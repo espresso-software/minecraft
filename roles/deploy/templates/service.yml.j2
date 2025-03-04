@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-{{ svc_port }}
+  namespace: {{ namespace }}
+  labels:
+    app: {{ deployment }}
+    version: {{ version }}
+    game: minecraft
+spec:
+  selector:
+    app: {{ deployment }}
+    version: {{ version }}
+    game: minecraft
+  ports:
+    - name: minecraft
+      protocol: TCP
+      port: {{ svc_port }}
+      targetPort: minecraft
+  type: LoadBalancer
+  internalTrafficPolicy: Local
+  externalTrafficPolicy: Local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ deployment }}-exporter
+  namespace: {{ namespace }}
+  labels:
+    app: {{ deployment }}
+    version: {{ version }}
+    game: minecraft
+spec:
+  selector:
+    app: {{ deployment }}
+    version: {{ version }}
+    game: minecraft
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9150
+      targetPort: metrics
+  type: ClusterIP

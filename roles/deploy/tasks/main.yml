@@ -344,50 +344,9 @@
               - name: "tmp"
                 emptyDir: {}
 
-- name: Create Server Service
+- name: Create Services
   kubernetes.core.k8s:
-    definition: |
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: "minecraft-{{ svc_port }}"
-        namespace: "{{ namespace }}"
-        annotations:
-          metallb.universe.tf/loadBalancerIPs: "{{ network_address }}"
-          metallb.universe.tf/allow-shared-ip: "minecraft"
-      spec:
-        selector:
-          app: "{{ deployment }}"
-          game: minecraft
-          version: "{{ version }}"
-        ports:
-          - name: minecraft
-            protocol: TCP
-            port: {{ svc_port | int }}
-            targetPort: minecraft
-        type: LoadBalancer
-        externalTrafficPolicy: Local
-        internalTrafficPolicy: Local
-
-- name: Create Exporter Service
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: "{{ deployment }}-exporter"
-        namespace: "{{ namespace }}"
-      spec:
-        selector:
-          app: "{{ deployment }}"
-          game: minecraft
-          version: "{{ version }}"
-        ports:
-          - name: metrics
-            protocol: TCP
-            port: 9150
-            targetPort: metrics
-        type: ClusterIP
+    template: service.yml.j2
 
 - name: Wait for Deployment to be Ready
   kubernetes.core.k8s_info:
