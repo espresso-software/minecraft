@@ -6,7 +6,6 @@ metadata:
   namespace: {{ namespace }}
   labels:
     app: {{ instance }}
-    version: {{ version }}
     game: minecraft
 spec:
   selector:
@@ -29,12 +28,10 @@ metadata:
   namespace: {{ namespace }}
   labels:
     app: {{ instance }}
-    version: {{ version }}
     game: minecraft
 spec:
   selector:
     app: {{ instance }}
-    version: {{ version }}
     game: minecraft
   ports:
     - name: metrics

@@ -147,14 +147,12 @@
         labels:
           game: minecraft
           app: "{{ instance }}"
-          version: "{{ version }}"
       spec:
         replicas: 1
         selector:
           matchLabels:
             app: "{{ instance }}"
             game: minecraft
-            version: "{{ version }}"
         strategy:
           type: RollingUpdate
           rollingUpdate:
@@ -164,7 +162,6 @@
           metadata:
             labels:
               app: "{{ instance }}"
-              version: "{{ version }}"
               game: minecraft
           spec:
             nodeSelector:
