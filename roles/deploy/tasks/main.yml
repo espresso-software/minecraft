@@ -5,7 +5,7 @@
 - name: Debug vars
   debug:
     msg: |
-      Deploying {{ deployment }} {{ version }} in {{ namespace }}
+      Deploying {{ instance }} {{ version }} in {{ namespace }}
         itzg image tag: {{ itzg_tag }}
         Listening on: {{ network_address }}:{{ svc_port }}
         Min CPU: {{ min_cpu }} Max CPU: {{ max_cpu }}
@@ -30,13 +30,13 @@
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
   with_items:
-    - name: "{{ deployment }}"
+    - name: "{{ instance }}"
       size: "{{ etc_size }}"
-    - name: "{{ deployment }}-world"
+    - name: "{{ instance }}-world"
       size: "{{ world_size }}"
-    - name: "{{ deployment }}-save"
+    - name: "{{ instance }}-save"
       size: "{{ save_size }}"
-    - name: "{{ deployment }}-mods-{{ version }}"
+    - name: "{{ instance }}-mods-{{ version }}"
       size: "{{ mods_size }}"
   kubernetes.core.k8s:
     definition:
@@ -47,7 +47,7 @@
         namespace: "{{ namespace }}"
         labels:
           game: minecraft
-          app: "{{ deployment }}"
+          app: "{{ instance }}"
       spec:
         accessModes:
           - ReadWriteOnce
@@ -63,11 +63,11 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: "{{ deployment }}-rcon-{{ version }}"
+        name: "{{ instance }}-rcon-{{ version }}"
         namespace: "{{ namespace }}"
         labels:
           game: minecraft
-          app: "{{ deployment }}"
+          app: "{{ instance }}"
       type: Opaque
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
@@ -100,11 +100,11 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: "{{ deployment }}-ops-{{ version }}"
+        name: "{{ instance }}-ops-{{ version }}"
         namespace: "{{ namespace }}"
         labels:
           game: minecraft
-          app: "{{ deployment }}"
+          app: "{{ instance }}"
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
@@ -119,7 +119,7 @@
         labels:
           game: minecraft
       spec:
-        selector: all()
+        selector: game == 'minecraft'
         ingress:
           - action: Allow
             protocol: TCP
@@ -142,17 +142,17 @@
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: "{{ deployment }}"
+        name: "{{ instance }}"
         namespace: "{{ namespace }}"
         labels:
           game: minecraft
-          app: "{{ deployment }}"
+          app: "{{ instance }}"
           version: "{{ version }}"
       spec:
         replicas: 1
         selector:
           matchLabels:
-            app: "{{ deployment }}"
+            app: "{{ instance }}"
             game: minecraft
             version: "{{ version }}"
         strategy:
@@ -163,7 +163,7 @@
         template:
           metadata:
             labels:
-              app: "{{ deployment }}"
+              app: "{{ instance }}"
               version: "{{ version }}"
               game: minecraft
           spec:
@@ -181,9 +181,9 @@
                 args:
                   - cat /tmp/ops.json; cp -f /tmp/ops.json /data/ops.json;
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
-                  - name: "{{ deployment }}-ops"
+                  - name: "{{ instance }}-ops"
                     mountPath: /tmp
               - name: check-update
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
@@ -203,10 +203,10 @@
                       mv -f /data/start.sh /data/start.sh.bak;
                     fi
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
             containers:
-              - name: "{{ deployment }}"
+              - name: "{{ instance }}"
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
                 securityContext:
                   readOnlyRootFilesystem: true
@@ -217,13 +217,13 @@
                     name: minecraft
                     protocol: TCP
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
-                  - name: "{{ deployment }}-world"
+                  - name: "{{ instance }}-world"
                     mountPath: /data/world
-                  - name: "{{ deployment }}-save"
+                  - name: "{{ instance }}-save"
                     mountPath: /data/save
-                  - name: "{{ deployment }}-mods"
+                  - name: "{{ instance }}-mods"
                     mountPath: /data/mods
                   - name: "tmp"
                     mountPath: /tmp
@@ -236,12 +236,12 @@
                     cpu: "{{ (max_cpu | float * 1.5 ) | round(0, 'ceil') | int }}000m"
                 envFrom:
                   - configMapRef:
-                      name: "{{ deployment }}-env-{{ version }}"
+                      name: "{{ instance }}-env-{{ version }}"
                 env:
                   - name: RCON_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: "{{ deployment }}-rcon-{{ version }}"
+                        name: "{{ instance }}-rcon-{{ version }}"
                         key: password
                   - name: CF_API_KEY
                     valueFrom:
@@ -307,10 +307,10 @@
                   - name: MC_RCON_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: "{{ deployment }}-rcon-{{ version }}"
+                        name: "{{ instance }}-rcon-{{ version }}"
                         key: password
                 volumeMounts:
-                  - name: "{{ deployment }}-world"
+                  - name: "{{ instance }}-world"
                     mountPath: /data/world
                     readOnly: true
                 livenessProbe:
@@ -326,21 +326,21 @@
                   initialDelaySeconds: 30
                   timeoutSeconds: 10
             volumes:
-              - name: "{{ deployment }}"
+              - name: "{{ instance }}"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}"
-              - name: "{{ deployment }}-mods"
+                  claimName: "{{ instance }}"
+              - name: "{{ instance }}-mods"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-mods-{{ version }}"
-              - name: "{{ deployment }}-world"
+                  claimName: "{{ instance }}-mods-{{ version }}"
+              - name: "{{ instance }}-world"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-world"
-              - name: "{{ deployment }}-save"
+                  claimName: "{{ instance }}-world"
+              - name: "{{ instance }}-save"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-save"
-              - name: "{{ deployment }}-ops"
+                  claimName: "{{ instance }}-save"
+              - name: "{{ instance }}-ops"
                 configMap:
-                  name: "{{ deployment }}-ops-{{ version }}"
+                  name: "{{ instance }}-ops-{{ version }}"
               - name: "tmp"
                 emptyDir: {}
 
@@ -354,7 +354,7 @@
     api_version: apps/v1
     kind: Deployment
     namespace: "{{ namespace }}"
-    name: "{{ deployment }}"
+    name: "{{ instance }}"
   register: deployment
 
 - name: Debug

@@ -5,12 +5,12 @@ metadata:
   name: minecraft-{{ svc_port }}
   namespace: {{ namespace }}
   labels:
-    app: {{ deployment }}
+    app: {{ instance }}
     version: {{ version }}
     game: minecraft
 spec:
   selector:
-    app: {{ deployment }}
+    app: {{ instance }}
     version: {{ version }}
     game: minecraft
   ports:
@@ -25,15 +25,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ deployment }}-exporter
+  name: {{ instance }}-exporter
   namespace: {{ namespace }}
   labels:
-    app: {{ deployment }}
+    app: {{ instance }}
     version: {{ version }}
     game: minecraft
 spec:
   selector:
-    app: {{ deployment }}
+    app: {{ instance }}
     version: {{ version }}
     game: minecraft
   ports:

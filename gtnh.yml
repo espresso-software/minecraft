@@ -26,7 +26,7 @@
   become: true
   vars:
     network_address: "{{ network.identifier }}.3.100"
-    deployment: "gtnh"
+    instance: "gtnh"
     itzg_tag: "java21"
     namespace: "games"
     version: "v2.7.2-qf"
