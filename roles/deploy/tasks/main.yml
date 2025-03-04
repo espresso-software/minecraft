@@ -119,7 +119,7 @@
         labels:
           game: minecraft
       spec:
-        selector: or(game == 'minecraft', kubernetes.io/role == 'gamer')
+        selector: all()
         ingress:
           - action: Allow
             protocol: TCP
