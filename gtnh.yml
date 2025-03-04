@@ -53,7 +53,7 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: "{{ deployment }}-env-{{ version }}"
+        name: "{{ instance }}-env-{{ version }}"
         namespace: "{{ namespace }}"
       data:
         EULA: "true"
@@ -62,7 +62,7 @@
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
-        MOTD: "{{ deployment }} {{ version }}"
+        MOTD: "{{ instance }} {{ version }}"
         # RCON_CMDS_STARTUP: |
         #  gamerule doInsomnia false
         #  gamrule doFireTick false
