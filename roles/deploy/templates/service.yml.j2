@@ -7,10 +7,12 @@ metadata:
   labels:
     app: {{ instance }}
     game: minecraft
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: {{ network_address }}
+    metallb.universe.tf/allow-shared-ip: minecraft
 spec:
   selector:
     app: {{ instance }}
-    version: {{ version }}
     game: minecraft
   ports:
     - name: minecraft
