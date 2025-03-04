@@ -214,6 +214,8 @@
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 25565
+                    name: minecraft
+                    protocol: TCP
                 volumeMounts:
                   - name: "{{ deployment }}"
                     mountPath: /data
@@ -286,6 +288,8 @@
                   allowPrivilegeEscalation: false
                 ports:
                   - containerPort: 9150
+                    name: metrics
+                    protocol: TCP
                 resources:
                   requests:
                     memory: "16M"
@@ -349,7 +353,7 @@
         name: "minecraft-{{ svc_port }}"
         namespace: "{{ namespace }}"
         annotations:
-          metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
+          metallb.universe.tf/loadBalancerIPs: "{{ network_address }}"
           metallb.universe.tf/allow-shared-ip: "minecraft"
       spec:
         selector:
@@ -357,9 +361,10 @@
           game: minecraft
           version: "{{ version }}"
         ports:
-          - protocol: TCP
+          - name: minecraft
+            protocol: TCP
             port: "{{ svc_port | int }}"
-            targetPort: 25565
+            targetPort: minecraft
         type: LoadBalancer
         externalTrafficPolicy: Local
         internalTrafficPolicy: Local
@@ -378,9 +383,10 @@
           game: minecraft
           version: "{{ version }}"
         ports:
-          - protocol: TCP
-            port: 80
-            targetPort: 9150
+          - name: metrics
+            protocol: TCP
+            port: 9150
+            targetPort: metrics
         type: ClusterIP
 
 - name: Wait for Deployment to be Ready
