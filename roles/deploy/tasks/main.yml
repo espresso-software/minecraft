@@ -346,7 +346,7 @@
 
 - name: Create Server Service
   kubernetes.core.k8s:
-    definition:
+    definition: |
       apiVersion: v1
       kind: Service
       metadata:
