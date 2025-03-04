@@ -346,6 +346,7 @@
 
 - name: Create Services
   kubernetes.core.k8s:
+    apply: yes
     template: service.yml.j2
 
 - name: Wait for Deployment to be Ready
