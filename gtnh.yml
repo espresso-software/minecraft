@@ -58,7 +58,8 @@
       data:
         EULA: "true"
         LOG_TIMESTAMP: "true"
-        ENABLE_AUTO_RESTART: "false"
+        ENABLE_AUTOPAUSE: "false"
+        ENABLE_WHITELIST: "false"
         VERSION: "1.7.10"
         TYPE: "FORGE"
         # SEED: ""
