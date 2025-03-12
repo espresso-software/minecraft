@@ -29,7 +29,7 @@
     instance: "gtnh"
     itzg_tag: "java8"
     namespace: "games"
-    version: "v2.7.3"
+    version: "v2.7.3-ops"
     min_cpu: 2
     max_cpu: 6
     min_ram: "8G"
@@ -47,6 +47,11 @@
           "name": "queen_of_wands",
           "level": 4,
           "bypassesPlayerLimit": true
+        },
+        {
+          "uuid": "43576037-51ad-4c44-83ff-c741500d8e1e",
+          "name": "Mylf_Hunter69420",
+          "level": 4
         }
       ]
     envConfigMap:
