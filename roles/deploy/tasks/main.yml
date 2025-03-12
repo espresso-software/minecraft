@@ -346,6 +346,10 @@
     apply: yes
     template: service.yml.j2
 
+- name: Restart Deployment
+  when: envConfigMap_cm.changed || ops_json_cm.changed
+  shell: kubectl -n {{ namespace }} rollout restart deploy {{ instance }}
+
 - name: Wait for Deployment to be Ready
   kubernetes.core.k8s_info:
     api_version: apps/v1
