@@ -29,7 +29,7 @@
     instance: "gtnh"
     itzg_tag: "java8"
     namespace: "games"
-    version: "v2.7.3-ops"
+    version: "v2.7.3"
     min_cpu: 2
     max_cpu: 6
     min_ram: "8G"
