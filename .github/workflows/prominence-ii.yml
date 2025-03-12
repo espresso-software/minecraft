@@ -17,6 +17,7 @@ on:
         required: true
         type: choice
         options:
+          - gtnh
           - prominence-ii
           - skyfactory-5
           - atm-10
@@ -40,24 +41,10 @@ jobs:
         run: |
           echo "${{ secrets.VAULT_DECRYPT_TOKEN }}" > /tmp/vault_pass
 
-      #TODO: use the same ip for all minecraft servers
-      - name: Determine IP address
-        id: ip
-        run: |
-          ip_address=""
-          if [ "${{ github.event.inputs.modpack }}" == "prominence-ii" ]; then
-            ip_address="100"
-          elif [ "${{ github.event.inputs.modpack }}" == "atm-10" ]; then
-            ip_address="101"
-          elif [ "${{ github.event.inputs.modpack }}" == "skyfactory-5" ]; then
-            ip_address="102"
-          fi
-          echo "::set-output name=network_address::${ip_address}"
-
       # Runs a single command using the runners shell
       - name: Deploy minecraft server
         run: |
-          ansible-playbook -v -i inventory/hosts.ini ${{ github.event.inputs.modpack }}.yml --vault-password-file /tmp/vault_pass --tags "${{ github.event.inputs.tags }}" --extra-vars "network_address=3.${{ steps.ip.outputs.network_address }}"
+          ansible-playbook -v -i inventory/hosts.ini ${{ github.event.inputs.modpack }}.yml --vault-password-file /tmp/vault_pass --tags "${{ github.event.inputs.tags }}"
 
       - name: Remove vault token
         run: |

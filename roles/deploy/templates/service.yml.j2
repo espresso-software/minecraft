@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-{{ svc_port }}
+  namespace: {{ namespace }}
+  labels:
+    app: {{ instance }}
+    game: minecraft
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: {{ network_address }}
+    metallb.universe.tf/allow-shared-ip: minecraft
+spec:
+  selector:
+    app: {{ instance }}
+    game: minecraft
+  ports:
+    - name: minecraft
+      protocol: TCP
+      port: {{ svc_port }}
+      targetPort: minecraft
+  type: LoadBalancer
+  internalTrafficPolicy: Local
+  externalTrafficPolicy: Local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ instance }}-exporter
+  namespace: {{ namespace }}
+  labels:
+    app: {{ instance }}
+    game: minecraft
+spec:
+  selector:
+    app: {{ instance }}
+    game: minecraft
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9150
+      targetPort: metrics
+  type: ClusterIP

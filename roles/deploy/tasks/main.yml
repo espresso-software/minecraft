@@ -1,32 +1,43 @@
 ---
-- name: Create Storage Class
+#     namespace: "games"
+#     server_stats: "forge"
+
+- name: Debug vars
+  debug:
+    msg: |
+      Deploying {{ instance }} {{ version }} in {{ namespace }}
+        itzg image tag: {{ itzg_tag }}
+        Listening on: {{ network_address }}:{{ svc_port }}
+        Min CPU: {{ min_cpu }} Max CPU: {{ max_cpu }}
+        Min RAM: {{ min_ram }} Max RAM: {{ max_ram }}
+        Writeable Directories:
+          /data {{ etc_size }}
+           |- world {{ world_size }}
+           |- save {{ save_size }}
+           |- mods {{ mods_size }}
+
+- name: Create Namespace
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
-      kind: StorageClass
+      kind: Namespace
       metadata:
-        name: minecraft
+        name: "{{ namespace }}"
         labels:
-          name: minecraft
-          namespace: "{{ namespace }}"
-      provisioner: driver.longhorn.io
-      allowVolumeExpansion: true
-      parameters:
-        numberOfReplicas: "3"
-        staleReplicaTimeout: "2880"
-        dataLocality: "best-effort"
-        replicaAutoBalancing: "best-effort"
-        fromBackup: ""
-
+          pod-security.kubernetes.io/warn: restricted
+          pod-security.kubernetes.io/warn-version: latest
+        
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
   with_items:
-    - name: "{{ deployment }}"
-      size: 10Gi
-    - name: "{{ deployment }}-world"
-      size: 10Gi
-    - name: "{{ deployment }}-save"
-      size: 5Gi
+    - name: "{{ instance }}"
+      size: "{{ etc_size }}"
+    - name: "{{ instance }}-world"
+      size: "{{ world_size }}"
+    - name: "{{ instance }}-save"
+      size: "{{ save_size }}"
+    - name: "{{ instance }}-mods-{{ version }}"
+      size: "{{ mods_size }}"
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -34,6 +45,9 @@
       metadata:
         name: "{{ item.name }}"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
+          app: "{{ instance }}"
       spec:
         accessModes:
           - ReadWriteOnce
@@ -49,13 +63,16 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: "{{ deployment }}-rcon-{{ version }}"
+        name: "{{ instance }}-rcon-{{ version }}"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
+          app: "{{ instance }}"
       type: Opaque
       data:
         password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') | b64encode }}"
 
-- name: Create API KEY Secret
+- name: Update API KEY Secret
   no_log: true
   register: apiKeySecret
   kubernetes.core.k8s:
@@ -65,6 +82,8 @@
       metadata:
         name: "cf-api-key"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
       type: Opaque
       data:
         key: "{{ cf_api_key | b64encode }}"
@@ -81,94 +100,93 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: "{{ deployment }}-ops-{{ version }}"
+        name: "{{ instance }}-ops-{{ version }}"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
+          app: "{{ instance }}"
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
-- name: Create Network Policy
+- name: Create Minecraft Policy
   kubernetes.core.k8s:
     definition:
-      apiVersion: networking.k8s.io/v1
+      apiVersion: projectcalico.org/v3
       kind: NetworkPolicy
       metadata:
         name: "default-minecraft-allow"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
       spec:
-        podSelector: {} 
-        policyTypes:
-          - Ingress
-          - Egress
+        selector: game == 'minecraft'
         ingress:
-          - ports:
-              - protocol: TCP
-                port: 25565
-          - from:
-              - podSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: prometheus
-            ports:
-              - protocol: TCP
-                port: 9150
-        egress:
-          - ports:
-              - protocol: TCP
-                port: 53
-              - protocol: UDP
-                port: 53
-              - protocol: TCP
-                port: 443
-          - to:
-              - podSelector:
-                  matchLabels:
-                    app: kube-dns
-          - to:
-              - ipBlock:
-                  cidr: "{{ network.proxy | split(':') | first  }}/32"
-            ports:
-              - protocol: TCP
-                port: 3128
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 25565
+          - action: Allow
+            protocol: TCP
+            destination:
+              ports:
+                - 9150
+            source:
+              namespaceSelector: app.kubernetes.io/name == 'prometheus'
 
-- name: Create StatefulSet
-  register: statefulset
+- name: Create Deployment
+  register: deployment
   kubernetes.core.k8s:
     apply: yes
     definition:
       apiVersion: apps/v1
-      kind: StatefulSet
+      kind: Deployment
       metadata:
-        name: "{{ deployment }}"
+        name: "{{ instance }}"
         namespace: "{{ namespace }}"
+        labels:
+          game: minecraft
+          app: "{{ instance }}"
       spec:
         replicas: 1
         selector:
           matchLabels:
-            app: "{{ deployment }}"
+            app: "{{ instance }}"
+            game: minecraft
         strategy:
-          type: Recreate
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 0
+            maxUnavailable: 1
         template:
           metadata:
             labels:
-              app: "{{ deployment }}"
-              version: "{{ version }}"
+              app: "{{ instance }}"
+              game: minecraft
           spec:
             nodeSelector:
               kubernetes.io/role: gamer
             initContainers:
               - name: copy-ops
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 command:
                   - /bin/bash
                   - -c
                 args:
                   - cat /tmp/ops.json; cp -f /tmp/ops.json /data/ops.json;
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
-                  - name: "{{ deployment }}-ops"
+                  - name: "{{ instance }}-ops"
                     mountPath: /tmp
               - name: check-update
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 command:
                   - /bin/bash
                   - -c
@@ -182,36 +200,45 @@
                       mv -f /data/start.sh /data/start.sh.bak;
                     fi
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
             containers:
-              - name: "{{ deployment }}"
+              - name: "{{ instance }}"
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 imagePullPolicy: Always
                 ports:
                   - containerPort: 25565
+                    name: minecraft
+                    protocol: TCP
                 volumeMounts:
-                  - name: "{{ deployment }}"
+                  - name: "{{ instance }}"
                     mountPath: /data
-                  - name: "{{ deployment }}-world"
+                  - name: "{{ instance }}-world"
                     mountPath: /data/world
-                  - name: "{{ deployment }}-save"
+                  - name: "{{ instance }}-save"
                     mountPath: /data/save
+                  - name: "{{ instance }}-mods"
+                    mountPath: /data/mods
+                  - name: "tmp"
+                    mountPath: /tmp
                 resources:
                   requests:
-                    memory: "{{ (envConfigMap.data.INIT_MEMORY | default('1') | split('G') | first | int + 1) }}G"
-                    cpu: "2000m" #TODO: read from variable
+                    memory: "{{ envConfigMap.data.MAX_MEMORY }}"
+                    cpu: "{{ (min_cpu | float * 1.5 ) | round(0, 'ceil') | int }}000m"
                   limits:
-                    memory: "{{ (envConfigMap.data.MAX_MEMORY | default('4') | split('G') | first | int + 4) }}G"
-                    cpu: "6000m" #TODO: read from variable
+                    memory: "{{ ((envConfigMap.data.MAX_MEMORY | split('G') | first | float) * 1.5) | round(0, 'ceil') | int }}G"
+                    cpu: "{{ (max_cpu | float * 1.5 ) | round(0, 'ceil') | int }}000m"
                 envFrom:
                   - configMapRef:
-                      name: "{{ deployment }}-env-{{ version }}"
+                      name: "{{ instance }}-env-{{ version }}"
                 env:
                   - name: RCON_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: "{{ deployment }}-rcon-{{ version }}"
+                        name: "{{ instance }}-rcon-{{ version }}"
                         key: password
                   - name: CF_API_KEY
                     valueFrom:
@@ -220,6 +247,10 @@
                         key: key
                   - name: PROXY
                     value: "{{ network.proxy }}"
+                dnsConfig:
+                  nameservers:
+                  - 1.1.1.1
+                  - 1.0.0.1
                 livenessProbe:
                   exec:
                     command:
@@ -249,8 +280,13 @@
                   timeoutSeconds: 1
               - name: minecraft-exporter
                 image: "ghcr.io/dirien/minecraft-exporter:0.19.0"
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  allowPrivilegeEscalation: false
                 ports:
                   - containerPort: 9150
+                    name: metrics
+                    protocol: TCP
                 resources:
                   requests:
                     memory: "16M"
@@ -268,10 +304,10 @@
                   - name: MC_RCON_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: "{{ deployment }}-rcon-{{ version }}"
+                        name: "{{ instance }}-rcon-{{ version }}"
                         key: password
                 volumeMounts:
-                  - name: "{{ deployment }}-world"
+                  - name: "{{ instance }}-world"
                     mountPath: /data/world
                     readOnly: true
                 livenessProbe:
@@ -287,68 +323,40 @@
                   initialDelaySeconds: 30
                   timeoutSeconds: 10
             volumes:
-              - name: "{{ deployment }}"
+              - name: "{{ instance }}"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}"
-              - name: "{{ deployment }}-world"
+                  claimName: "{{ instance }}"
+              - name: "{{ instance }}-mods"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-world"
-              - name: "{{ deployment }}-save"
+                  claimName: "{{ instance }}-mods-{{ version }}"
+              - name: "{{ instance }}-world"
                 persistentVolumeClaim:
-                  claimName: "{{ deployment }}-save"
-              - name: "{{ deployment }}-ops"
+                  claimName: "{{ instance }}-world"
+              - name: "{{ instance }}-save"
+                persistentVolumeClaim:
+                  claimName: "{{ instance }}-save"
+              - name: "{{ instance }}-ops"
                 configMap:
-                  name: "{{ deployment }}-ops-{{ version }}"
+                  name: "{{ instance }}-ops-{{ version }}"
+              - name: "tmp"
+                emptyDir: {}
 
-- name: Force restart of StatefulSet
-  when: statefulset.changed or envConfigMap_cm.changed or ops_json_cm.changed or rconSecret.changed
-  ansible.builtin.shell: kubectl rollout restart statefulset "{{ deployment }}" -n "{{ namespace }}"; sleep 30
+- name: Create Services
+  kubernetes.core.k8s:
+    apply: yes
+    template: service.yml.j2
 
-- name: Wait for StatefulSet to be ready
+- name: Restart Deployment
+  shell: kubectl -n {{ namespace }} rollout restart deploy {{ instance }}
+
+- name: Wait for Deployment to be Ready
   kubernetes.core.k8s_info:
-    kind: StatefulSet
+    api_version: apps/v1
+    kind: Deployment
     namespace: "{{ namespace }}"
-    name: "{{ deployment }}"
-  register: statefulset_info
-  until: statefulset_info.resources[0].status.availableReplicas == 1
-  retries: 30
-  delay: 10
+    name: "{{ instance }}"
+  register: deployment
 
-- name: Create Server Service
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: "{{ deployment }}"
-        namespace: "{{ namespace }}"
-        annotations:
-          metallb.universe.tf/loadBalancerIPs: "{{ network.identifier }}.{{ network_address }}"
-          metallb.universe.tf/allow-shared-ip: "minecraft"
-      spec:
-        selector:
-          app: "{{ deployment }}"
-        ports:
-          - protocol: TCP
-            port: 25565
-            targetPort: 25565
-        type: LoadBalancer
-        externalTrafficPolicy: Local
-        internalTrafficPolicy: Local
-
-- name: Create Exporter Service
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: "{{ deployment }}-exporter"
-        namespace: "{{ namespace }}"
-      spec:
-        selector:
-          app: "{{ deployment }}"
-        ports:
-          - protocol: TCP
-            port: 80
-            targetPort: 9150
-        type: ClusterIP
+- name: Debug
+  debug:
+    var: deployment
