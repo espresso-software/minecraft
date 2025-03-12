@@ -347,7 +347,7 @@
     template: service.yml.j2
 
 - name: Restart Deployment
-  when: envConfigMap_cm.changed || ops_json_cm.changed
+  when: envConfigMap_cm.changed or ops_json_cm.changed
   shell: kubectl -n {{ namespace }} rollout restart deploy {{ instance }}
 
 - name: Wait for Deployment to be Ready
