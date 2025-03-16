@@ -38,6 +38,8 @@
       size: "{{ save_size }}"
     - name: "{{ instance }}-mods-{{ version }}"
       size: "{{ mods_size }}"
+    - name: "{{ instance }}-backup"
+      size: "{{ backup_size }}"
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -224,6 +226,8 @@
                     mountPath: /data/mods
                   - name: "tmp"
                     mountPath: /tmp
+                  - name: "{{ instance }}-backup"
+                    mountPath: /data/backups
                 resources:
                   requests:
                     memory: "{{ envConfigMap.data.MAX_MEMORY }}"
@@ -335,6 +339,9 @@
               - name: "{{ instance }}-save"
                 persistentVolumeClaim:
                   claimName: "{{ instance }}-save"
+              - name: "{{ instance }}-backup"
+                persistentVolumeClaim:
+                  claimName: "{{ instance }}-backup"
               - name: "{{ instance }}-ops"
                 configMap:
                   name: "{{ instance }}-ops-{{ version }}"

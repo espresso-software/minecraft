@@ -35,6 +35,7 @@
     min_ram: "8G"
     max_ram: "16G"
     world_size: "20Gi"
+    backup_size: "15Gi"
     etc_size: "20Gi"
     save_size: "5Gi"
     mods_size: "5Gi"
