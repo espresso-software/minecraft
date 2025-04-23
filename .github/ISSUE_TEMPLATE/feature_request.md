@@ -12,3 +12,9 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 
 **Desired Experience**
 A clear and concise description of what you want to happen.
+
+**Requirements**
+- What is needed at launch
+
+**Nice to have**
+- What can be implemented later
