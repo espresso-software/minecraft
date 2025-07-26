@@ -168,7 +168,8 @@
               game: minecraft
           spec:
             nodeSelector:
-              kubernetes.io/role: gamer
+              kubernetes.io/role: worker
+              kubernetes.io/hostname: game-wkr04pl #TODO: support warm/hot worker
             initContainers:
               - name: copy-ops
                 image: "itzg/minecraft-server:{{ itzg_tag }}"
