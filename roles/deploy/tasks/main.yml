@@ -253,10 +253,10 @@
                         key: key
                   - name: PROXY
                     value: "{{ internet_proxy }}"
-                # dnsConfig:
-                #   nameservers:
-                #   - 1.1.1.1
-                #   - 1.0.0.1
+                dnsConfig:
+                  nameservers:
+                  - 1.1.1.1
+                  - 1.0.0.1
                 livenessProbe:
                   exec:
                     command:
