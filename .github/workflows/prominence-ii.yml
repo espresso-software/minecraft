@@ -17,6 +17,7 @@ on:
         required: true
         type: choice
         options:
+          - vault-hunters
           - gtnh
           - prominence-ii
           - skyfactory-5

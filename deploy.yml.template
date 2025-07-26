@@ -1,0 +1,64 @@
+---
+- name: 
+  hosts:
+    - game-k3s_managers
+  run_once: true
+  tags:
+    - server
+  environment:
+    KUBECONFIG: "{{ kube_config_path }}"
+  become: true
+  vars:
+    network_address: "{{ network.identifier }}.3.100"
+    instance: "<NAME>"
+    itzg_tag: "<TAG>"
+    namespace: "games"
+    version: "v<VERSION>"
+    min_cpu: <MIN_CPU>
+    max_cpu: <MAX_CPU>
+    min_ram: "<MIN_RAM>"
+    max_ram: "<MAX_RAM>"
+    world_size: "<WORLD_SIZE>"
+    etc_size: "<ETC_SIZE>"
+    save_size: "<SAVE_SIZE>"
+    mods_size: "<MODS_SIZE>"
+    server_stats: "<SERVER_STATS>"
+    svc_port: <PORT>
+    ops_json:
+      [
+        {
+          "uuid": "f0992df2-357c-403c-9d4c-b73da406aabb",
+          "name": "queen_of_wands",
+          "level": 4,
+          "bypassesPlayerLimit": true
+        }
+      ]
+    envConfigMap:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "{{ instance }}-env-{{ version }}"
+        namespace: "{{ namespace }}"
+      data:
+        EULA: "true"
+        LOG_TIMESTAMP: "true"
+        ENABLE_AUTO_RESTART: "false"
+        # VERSION: ""
+        TYPE: "<TYPE>"
+        # SEED: "<SEED>"
+        SPAWN_PROTECTION: "0"
+        ALLOW_FLIGHT: "TRUE"
+        MOTD: "{{ instance }} {{ version }}"
+        # RCON_CMDS_STARTUP: |
+        #  gamerule doInsomnia false
+        #  gamrule doFireTick false
+        INIT_MEMORY: "{{ min_ram }}"
+        MAX_MEMORY: "{{ max_ram }}"
+        # CF_SLUG: "<ITZG_SLUG>"
+        # CF_FILE_ID: "<ITZG_FILE_ID>"
+        # CF_BASE_DIR: "/data"
+        # CF_SERVER_MOD: "<ITZG_FILE>"
+        JVM_XX_OPTS: "<GC_ARGS> -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
+        USE_AIKAR_FLAGS: "FALSE"
+  roles:
+    - deploy
