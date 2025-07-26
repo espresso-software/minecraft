@@ -251,7 +251,7 @@
                         name: cf-api-key
                         key: key
                   - name: PROXY
-                    value: "{{ network.proxy }}"
+                    value: "{{ internet_proxy }}"
                 dnsConfig:
                   nameservers:
                   - 1.1.1.1
