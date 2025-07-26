@@ -111,31 +111,31 @@
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
-- name: Create Minecraft Policy
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: projectcalico.org/v3
-      kind: NetworkPolicy
-      metadata:
-        name: "default-minecraft-allow"
-        namespace: "{{ namespace }}"
-        labels:
-          game: minecraft
-      spec:
-        selector: game == 'minecraft'
-        ingress:
-          - action: Allow
-            protocol: TCP
-            destination:
-              ports:
-                - 25565
-          - action: Allow
-            protocol: TCP
-            destination:
-              ports:
-                - 9150
-            source:
-              namespaceSelector: app.kubernetes.io/name == 'prometheus'
+# - name: Create Minecraft Policy
+#   kubernetes.core.k8s:
+#     definition:
+#       apiVersion: projectcalico.org/v3
+#       kind: NetworkPolicy
+#       metadata:
+#         name: "default-minecraft-allow"
+#         namespace: "{{ namespace }}"
+#         labels:
+#           game: minecraft
+#       spec:
+#         selector: game == 'minecraft'
+#         ingress:
+#           - action: Allow
+#             protocol: TCP
+#             destination:
+#               ports:
+#                 - 25565
+#           - action: Allow
+#             protocol: TCP
+#             destination:
+#               ports:
+#                 - 9150
+#             source:
+#               namespaceSelector: app.kubernetes.io/name == 'prometheus'
 
 - name: Create Deployment
   register: deployment
