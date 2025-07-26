@@ -340,9 +340,9 @@
               - name: "{{ instance }}-save"
                 persistentVolumeClaim:
                   claimName: "{{ instance }}-save"
-              - name: "{{ instance }}-backup"
+              - name: "{{ instance }}-backups"
                 persistentVolumeClaim:
-                  claimName: "{{ instance }}-backup"
+                  claimName: "{{ instance }}-backups"
               - name: "{{ instance }}-ops"
                 configMap:
                   name: "{{ instance }}-ops-{{ version }}"
