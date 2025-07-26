@@ -1,7 +1,7 @@
 ---
 - name: 
   hosts:
-    - game-k3s_managers
+    - game-k3s-managers
   run_once: true
   tags:
     - server
