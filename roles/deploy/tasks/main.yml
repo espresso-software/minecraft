@@ -12,6 +12,7 @@
         Min RAM: {{ min_ram }} Max RAM: {{ max_ram }}
         Writeable Directories:
           /data {{ etc_size }}
+           |- backups {{ backup_size }}
            |- world {{ world_size }}
            |- save {{ save_size }}
            |- mods {{ mods_size }}
@@ -38,6 +39,8 @@
       size: "{{ save_size }}"
     - name: "{{ instance }}-mods-{{ version }}"
       size: "{{ mods_size }}"
+    - name: "{{ instance }}-backups"
+      size: "{{ backup_size }}"
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -222,6 +225,8 @@
                     mountPath: /data/save
                   - name: "{{ instance }}-mods"
                     mountPath: /data/mods
+                  - name: "{{ instance }}-backups"
+                    mountPath: /data/backups"
                   - name: "tmp"
                     mountPath: /tmp
                 resources:
@@ -335,6 +340,9 @@
               - name: "{{ instance }}-save"
                 persistentVolumeClaim:
                   claimName: "{{ instance }}-save"
+              - name: "{{ instance }}-backup"
+                persistentVolumeClaim:
+                  claimName: "{{ instance }}-backup"
               - name: "{{ instance }}-ops"
                 configMap:
                   name: "{{ instance }}-ops-{{ version }}"

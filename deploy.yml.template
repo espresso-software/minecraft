@@ -9,7 +9,7 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
-    network_address: "{{ network.identifier }}.3.100"
+    network_address: "10.0.206.100"
     instance: "<NAME>"
     itzg_tag: "<TAG>"
     namespace: "games"
@@ -20,6 +20,7 @@
     max_ram: "<MAX_RAM>"
     world_size: "<WORLD_SIZE>"
     etc_size: "<ETC_SIZE>"
+    backup_size: "<BKP_SIZE>"
     save_size: "<SAVE_SIZE>"
     mods_size: "<MODS_SIZE>"
     server_stats: "<SERVER_STATS>"

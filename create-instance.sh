@@ -73,6 +73,11 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
+    -b|--backup-size)
+      BKP_SIZE="$2"
+      shift
+      shift
+      ;;
     -B|--save-size)
       SAVE_SIZE="$2"
       shift
@@ -113,6 +118,7 @@ print_help() {
   echo "  -f, --file-id       The ITZG_FILE_ID (optional)"
   echo "  -F, --file          The ITZG_FILE (optional)"
   echo "  -W, --world-size    The WORLD_SIZE (default: 20Gi)"
+  echo "  -b, --backup-size   The BKP_SIZE (optional, default: 10Gi)"
   echo "  -B, --save-size     The SAVE_SIZE (default: 5Gi)"
   echo "  -E, --etc-size      The ETC_SIZE (default: 5Gi)"
   echo "  -D, --mods-size     The MODS_SIZE (default: 5Gi)"
@@ -143,6 +149,7 @@ PORT="${PORT:-25565}"
 WORLD_SIZE="${WORLD_SIZE:-20Gi}"
 SAVE_SIZE="${SAVE_SIZE:-5Gi}"
 ETC_SIZE="${ETC_SIZE:-5Gi}"
+BKP_SIZE="${BKP_SIZE:-10Gi}"
 MODS_SIZE="${MODS_SIZE:-5Gi}"
 GC_ARGS="-XX:+UseZGC"
 
@@ -168,5 +175,6 @@ sed -i "s%<ITZG_FILE>%$ITZG_FILE%g" $DEPLOYMENT_NAME.yml
 sed -i "s%<WORLD_SIZE>%$WORLD_SIZE%g" $DEPLOYMENT_NAME.yml
 sed -i "s%<SAVE_SIZE>%$SAVE_SIZE%g" $DEPLOYMENT_NAME.yml
 sed -i "s%<ETC_SIZE>%$ETC_SIZE%g" $DEPLOYMENT_NAME.yml
+sed -i "s%<BKP_SIZE>%$BKP_SIZE%g" $DEPLOYMENT_NAME.yml
 sed -i "s%<MODS_SIZE>%$MODS_SIZE%g" $DEPLOYMENT_NAME.yml
 sed -i "s%<GC_ARGS>%$GC_ARGS%g" $DEPLOYMENT_NAME.yml

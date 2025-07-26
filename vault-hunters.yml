@@ -1,5 +1,5 @@
 ---
-- name:
+- name: 
   hosts:
     - game-k3s_managers
   run_once: true
@@ -20,6 +20,7 @@
     max_ram: "20G"
     world_size: "20Gi"
     etc_size: "5Gi"
+    backup_size: "10Gi"
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
