@@ -52,9 +52,10 @@
         MOTD: "{{ instance }} {{ version }}"
         # RCON_CMDS_STARTUP: |
         #  gamerule doInsomnia false
-        #  gamrule doFireTick false
+        #  gamerule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
+        PROXY: "{{ internet_proxy }}"
         # CF_SLUG: "<ITZG_SLUG>"
         # CF_FILE_ID: "<ITZG_FILE_ID>"
         # CF_BASE_DIR: "/data"
