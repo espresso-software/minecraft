@@ -47,6 +47,7 @@
         MAX_PLAYERS: "30"
         INIT_MEMORY: "8G"
         MAX_MEMORY: "16G"
+        PROXY: "{{ internet_proxy }}"
         CF_BASE_DIR: "/data"
         CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5981/375/Prominence_II_RPG_Server_Pack_v3.0.21.zip"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=6 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"

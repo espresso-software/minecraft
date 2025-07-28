@@ -60,6 +60,7 @@
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
+        PROXY: "{{ internet_proxy }}"
         # CF_SLUG: ""
         # CF_FILE_ID: ""
         # CF_BASE_DIR: "/data"
