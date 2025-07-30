@@ -10,16 +10,17 @@
   become: true
   vars:
     network_address: "10.0.206.100"
-    instance: "gtnh"
-    itzg_tag: "java8"
+    instance: "vault-hunters"
+    itzg_tag: "java21"
     namespace: "games"
-    version: "v2.7.3"
+    version: "v3.19.4.0"
     min_cpu: 2
-    max_cpu: 6
+    max_cpu: 4
     min_ram: "8G"
-    max_ram: "16G"
+    max_ram: "20G"
     world_size: "20Gi"
     etc_size: "5Gi"
+    backup_size: "10Gi"
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
@@ -44,12 +45,14 @@
       metadata:
         name: "{{ instance }}-env-{{ version }}"
         namespace: "{{ namespace }}"
+        labels:
+          app: "{{ instance }}"
+          game: minecraft
       data:
         EULA: "true"
         LOG_TIMESTAMP: "true"
-        ENABLE_AUTOPAUSE: "false"
-        ENABLE_WHITELIST: "false"
-        VERSION: "1.7.10"
+        ENABLE_AUTO_RESTART: "false"
+        VERSION: "1.18.2"
         TYPE: "FORGE"
         # SEED: ""
         SPAWN_PROTECTION: "0"
@@ -60,17 +63,18 @@
         #  gamrule doFireTick false
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
-        PROXY: "{{ internet_proxy }}"
-        # CF_SLUG: ""
-        # CF_FILE_ID: ""
+        PROXY: "http://{{ internet_proxy }}"
+        FTP_PROXY: "ftp://{{ internet_proxy }}"
+        NO_PROXY: "local,10.0.0.0/8"
+        # CF_SLUG: "vault-hunters-1-18-2"
+        # CF_FILE_ID: "6818944"
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
-        GENERIC_PACKS: GT_New_Horizons_2.7.3_Server_Java_8
+        GENERIC_PACKS: Vault-Hunters-3rd-Edition-3.19.4.0-server-files
         GENERIC_PACKS_SUFFIX: .zip
-        GENERIC_PACKS_PREFIX: https://downloads.gtnewhorizons.com/ServerPacks/
-        # if this isn't true, then the container tries to download the modpack every run
+        GENERIC_PACKS_PREFIX: https://mediafilez.forgecdn.net/files/6818/946/
         SKIP_GENERIC_PACK_UPDATE_CHECK: "false"
-        JVM_XX_OPTS: "-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:InitiatingHeapOccupancyPercent=45 -XX:G1ReservePercent=15 -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
+        JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
     - deploy

@@ -1,23 +1,7 @@
 ---
-#TODO: change from UFW to physical firewall device
-- name: Open Firewall Ports
-  become: true
-  hosts:
-    - k3s
-  tags:
-    - firewall
-  tasks:
-    - name: Open minecraft Ports
-      community.general.ufw:
-        rule: allow
-        dest: "{{ network.identifier }}.{{ network_address }}"
-        port: 25565
-        proto: tcp
-        comment: "prominence ii minecraft server }}"
-
 - name: 
   hosts:
-    - k3s_managers
+    - game-k3s-managers
   run_once: true
   tags:
     - server
@@ -63,6 +47,7 @@
         MAX_PLAYERS: "30"
         INIT_MEMORY: "8G"
         MAX_MEMORY: "16G"
+        PROXY: "{{ internet_proxy }}"
         CF_BASE_DIR: "/data"
         CF_SERVER_MOD: "https://mediafilez.forgecdn.net/files/5981/375/Prominence_II_RPG_Server_Pack_v3.0.21.zip"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=6 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"

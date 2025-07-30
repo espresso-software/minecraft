@@ -17,6 +17,7 @@ on:
         required: true
         type: choice
         options:
+          - vault-hunters
           - gtnh
           - prominence-ii
           - skyfactory-5
@@ -37,17 +38,10 @@ jobs:
           submodules: 'true'
           token: ${{ secrets.READ_ACCESS_TOKEN }}
       
-      - name: Setup vault token
-        run: |
-          echo "${{ secrets.VAULT_DECRYPT_TOKEN }}" > /tmp/vault_pass
-
-      # Runs a single command using the runners shell
-      - name: Deploy minecraft server
-        run: |
-          ansible-playbook -v -i inventory/hosts.ini ${{ github.event.inputs.modpack }}.yml --vault-password-file /tmp/vault_pass --tags "${{ github.event.inputs.tags }}"
-
-      - name: Remove vault token
-        run: |
-          rm /tmp/vault_pass
-        
+      - uses: espresso-software/actions/ansible/run-playbook@main
+        env:
+          VAULT_DECRYPT_TOKEN: ${{ secrets.VAULT_DECRYPT_TOKEN }}
+        with:
+          playbook_path: ${{ github.event.inputs.modpack }}.yml
+          inventory_path: inventory/hosts.yml
         
