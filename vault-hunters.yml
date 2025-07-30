@@ -11,7 +11,7 @@
   vars:
     network_address: "10.0.206.100"
     instance: "vault-hunters"
-    itzg_tag: "java17"
+    itzg_tag: "java21"
     namespace: "games"
     version: "v1.18.2"
     min_cpu: 2
