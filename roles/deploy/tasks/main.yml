@@ -142,6 +142,16 @@
               - ports:
                   - port: "25565"
                     protocol: TCP
+        egress:
+          - toEntities:
+              - world
+            toPorts:
+              - ports:
+                  - port: "443"
+                    protocol: TCP
+              - ports:
+                  - port: "80"
+                    protocol: TCP
 
 - name: Create Deployment
   register: deployment
