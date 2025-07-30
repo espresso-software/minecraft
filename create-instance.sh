@@ -112,7 +112,7 @@ print_help() {
   echo "  -c, --min-cpu       The MIN_CPU (default: 1)"
   echo "  -C, --max-cpu       The MAX_CPU (default: 4)"
   echo "  -r, --min-memory    The MIN_RAM (default: 1G)"
-  echo "  -R, --max-memory   The MAX_RAM (default: 4G)"
+  echo "  -R, --max-memory    The MAX_RAM (default: 4G)"
   echo "  -S, --seed          The SEED (optional)"
   echo "  -s, --slug          The ITZG_SLUG (optional)"
   echo "  -f, --file-id       The ITZG_FILE_ID (optional)"
