@@ -111,7 +111,7 @@ print_help() {
   echo "  -A, --server-stats  The SERVER_STATS (default: forge)"
   echo "  -c, --min-cpu       The MIN_CPU (default: 1)"
   echo "  -C, --max-cpu       The MAX_CPU (default: 4)"
-  echo "  -r, --min-memory   The MIN_RAM (default: 1G)"
+  echo "  -r, --min-memory    The MIN_RAM (default: 1G)"
   echo "  -R, --max-memory   The MAX_RAM (default: 4G)"
   echo "  -S, --seed          The SEED (optional)"
   echo "  -s, --slug          The ITZG_SLUG (optional)"
