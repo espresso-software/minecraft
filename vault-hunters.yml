@@ -13,7 +13,7 @@
     instance: "vault-hunters"
     itzg_tag: "java21"
     namespace: "games"
-    version: "v1.18.2"
+    version: "v3.19.4.0"
     min_cpu: 2
     max_cpu: 4
     min_ram: "8G"
@@ -50,7 +50,7 @@
         LOG_TIMESTAMP: "true"
         ENABLE_AUTO_RESTART: "false"
         VERSION: "1.18.2"
-        TYPE: "FORGE"
+        TYPE: "AUTO_CURSEFORGE"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
