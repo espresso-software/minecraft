@@ -45,6 +45,9 @@
       metadata:
         name: "{{ instance }}-env-{{ version }}"
         namespace: "{{ namespace }}"
+        labels:
+          app: "{{ instance }}"
+          game: minecraft
       data:
         EULA: "true"
         LOG_TIMESTAMP: "true"
@@ -63,7 +66,7 @@
         PROXY: "http://{{ internet_proxy }}"
         HTTP_PROXY: "http://{{ internet_proxy }}"
         HTTPS_PROXY: "http://{{ internet_proxy }}"
-        FTP_PROXY: "http://{{ internet_proxy }}"
+        FTP_PROXY: "ftp://{{ internet_proxy }}"
         NO_PROXY: "localhost,10.0.0.0/8"
         CF_SLUG: "vault-hunters-1-18-2"
         CF_FILE_ID: "6818944"
