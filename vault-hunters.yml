@@ -53,7 +53,7 @@
         LOG_TIMESTAMP: "true"
         ENABLE_AUTO_RESTART: "false"
         VERSION: "1.18.2"
-        TYPE: "AUTO_CURSEFORGE"
+        TYPE: "FORGE"
         # SEED: ""
         SPAWN_PROTECTION: "0"
         ALLOW_FLIGHT: "TRUE"
@@ -66,13 +66,13 @@
         PROXY: "http://{{ internet_proxy }}"
         FTP_PROXY: "ftp://{{ internet_proxy }}"
         NO_PROXY: "local,10.0.0.0/8"
-        CF_SLUG: "vault-hunters-1-18-2"
-        CF_FILE_ID: "6818944"
+        # CF_SLUG: "vault-hunters-1-18-2"
+        # CF_FILE_ID: "6818944"
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
-        # GENERIC_PACKS: Vault-Hunters-3rd-Edition-3.19.1.0-server-files
-        # GENERIC_PACKS_SUFFIX: .zip
-        # GENERIC_PACKS_PREFIX: https://mediafilez.forgecdn.net/files/6807/189/
+        GENERIC_PACKS: Vault-Hunters-3rd-Edition-3.19.4.0-server-files
+        GENERIC_PACKS_SUFFIX: .zip
+        GENERIC_PACKS_PREFIX: https://mediafilez.forgecdn.net/files/6818/946/
         SKIP_GENERIC_PACK_UPDATE_CHECK: "false"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
