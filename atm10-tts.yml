@@ -9,7 +9,7 @@
     KUBECONFIG: "{{ kube_config_path }}"
   become: true
   vars:
-    network_address: "10.0.206.100"
+    network_address: "10.0.206.101"
     instance: "atm10-tts"
     itzg_tag: "java21"
     namespace: "games"
