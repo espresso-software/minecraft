@@ -18,6 +18,7 @@ on:
         type: choice
         options:
           - vault-hunters
+          - atm10-tts
           - gtnh
           - prominence-ii
           - skyfactory-5

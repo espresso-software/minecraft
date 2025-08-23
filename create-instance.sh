@@ -3,6 +3,10 @@
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
+    -h|--help)
+      print_help
+      exit 0
+      ;;
     -n|--name)
       DEPLOYMENT_NAME="$2"
       shift
@@ -122,15 +126,24 @@ print_help() {
   echo "  -B, --save-size     The SAVE_SIZE (default: 5Gi)"
   echo "  -E, --etc-size      The ETC_SIZE (default: 5Gi)"
   echo "  -D, --mods-size     The MODS_SIZE (default: 5Gi)"
+  echo "  -p, --port          The PORT (default: 25565)"
+  echo ""
+  echo "Example:"
+  echo "  ./create-instance.sh -n my-minecraft -v 1.20.4 -t java17 -T PAPER -c 2 -C 6 -r 2G -R 8G -p 25566 -S 12345 -s paper -f 123456 -F paper-1.20.4.jar -W 30Gi -B 10Gi -E 10Gi -D 10Gi"
+  echo ""
+  echo "container image docs: https://docker-minecraft-server.readthedocs.io/en/latest/"
+  echo "container image source: https://github.com/itzg/docker-minecraft-server"
 }
 
 # Validate required inputs
 if [ -z "$DEPLOYMENT_NAME" ]; then
   echo "NAME is required"
+  print_help
   exit 1
 fi
 if [ -z "$VERSION" ]; then
   echo "VERSION is required"
+  print_help
   exit 1
 fi
 
