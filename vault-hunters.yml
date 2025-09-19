@@ -21,6 +21,7 @@
     world_size: "20Gi"
     etc_size: "5Gi"
     backup_size: "10Gi"
+    backups_dir: "simplebackups"
     save_size: "5Gi"
     mods_size: "5Gi"
     server_stats: "forge"
