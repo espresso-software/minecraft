@@ -70,9 +70,9 @@
         # CF_FILE_ID: "6818944"
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
-        GENERIC_PACKS: Vault-Hunters-3rd-Edition-3.19.4.0-server-files
+        GENERIC_PACKS: Vault-Hunters-3rd-Edition-3.19.5.0-server-files
         GENERIC_PACKS_SUFFIX: .zip
-        GENERIC_PACKS_PREFIX: https://mediafilez.forgecdn.net/files/6818/946/
+        GENERIC_PACKS_PREFIX: https://mediafilez.forgecdn.net/files/6833/512/
         SKIP_GENERIC_PACK_UPDATE_CHECK: "false"
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
