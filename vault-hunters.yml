@@ -19,7 +19,7 @@
     min_ram: "8G"
     max_ram: "20G"
     world_size: "20Gi"
-    etc_size: "5Gi"
+    etc_size: "10Gi"
     backup_size: "10Gi"
     backups_dir: "simplebackups"
     save_size: "5Gi"
