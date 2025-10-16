@@ -10,7 +10,7 @@
   become: true
   vars:
     network_address: "10.0.206.102"
-    instance: "cobblemon"
+    instance: "daddymon"
     itzg_tag: "java21"
     namespace: "games"
     version: "v1.6.1"
@@ -57,8 +57,8 @@
         INIT_MEMORY: "{{ min_ram }}"
         MAX_MEMORY: "{{ max_ram }}"
         PROXY: "{{ internet_proxy }}"
-        CF_SLUG: "cobblemon-updated"
-        CF_FILE_ID: "6672619"
+        CF_SLUG: "cobblemon-fabric"
+        CF_FILE_ID: "6715093"
         # CF_BASE_DIR: "/data"
         # CF_SERVER_MOD: ""
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
