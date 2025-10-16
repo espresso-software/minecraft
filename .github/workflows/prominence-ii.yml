@@ -8,15 +8,16 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Enter tags to run'
+        description: "Enter tags to run"
         required: true
-        default: 'server'
+        default: "server"
         type: string
       modpack:
-        description: 'Enter modpack to run'
+        description: "Enter modpack to run"
         required: true
         type: choice
         options:
+          - cobblemon
           - vault-hunters
           - gtnh
           - prominence-ii
@@ -28,20 +29,19 @@ jobs:
   # This workflow contains a single job called "build"
   deploy:
     # The type of runner that the job will run on
-    runs-on: ['self-hosted', 'ansible']
+    runs-on: ["self-hosted", "ansible"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
-          submodules: 'true'
+          submodules: "true"
           token: ${{ secrets.READ_ACCESS_TOKEN }}
-      
+
       - uses: espresso-software/actions/ansible/run-playbook@main
         env:
           VAULT_DECRYPT_TOKEN: ${{ secrets.VAULT_DECRYPT_TOKEN }}
         with:
           playbook_path: ${{ github.event.inputs.modpack }}.yml
           inventory_path: inventory/hosts.yml
-        
