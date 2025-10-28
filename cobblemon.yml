@@ -61,7 +61,7 @@
         # CF_SLUG: "cobbleverse-cobblemon"
         # CF_FILE_ID: "7107446"
         CF_BASE_DIR: "/data"
-        MODPACK: "https://mediafilez.forgecdn.net/files/7107/446/COBBLEVERSE-1.6-CF.zip"
+        MODPACK: "https://mediafilez.forgecdn.net/files/7107/446/COBBLEVERSE-1.6-CF.zip" # I have to run this locally and copy my own mods over to make this shit work which is crazy
         JVM_XX_OPTS: "-XX:+UseZGC -XX:+ParallelRefProcEnabled -XX:+UseStringDeduplication -XX:ParallelGCThreads={{ (min_cpu | int * 2) | round(0, 'ceil') | int }} -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+PerfDisableSharedMem"
         USE_AIKAR_FLAGS: "FALSE"
   roles:
