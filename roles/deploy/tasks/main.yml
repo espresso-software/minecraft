@@ -27,7 +27,7 @@
         labels:
           pod-security.kubernetes.io/warn: restricted
           pod-security.kubernetes.io/warn-version: latest
-        
+
 - name: Create Persistent Volume Claims
   failed_when: false # ignore failure if PVC already exists
   with_items:
@@ -219,6 +219,7 @@
                       echo "Moving old server start script";
                       mv -f /data/start.sh /data/start.sh.bak;
                     fi
+                    rm -rf /data/config/fml.toml;
                 volumeMounts:
                   - name: "{{ instance }}"
                     mountPath: /data
@@ -243,7 +244,7 @@
                   - name: "{{ instance }}-mods"
                     mountPath: /data/mods
                   - name: "{{ instance }}-backups"
-                    mountPath: /data/backups"
+                    mountPath: "/data/{{ backups_dir }}"
                   - name: "tmp"
                     mountPath: /tmp
                 resources:
