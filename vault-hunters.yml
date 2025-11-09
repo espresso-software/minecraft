@@ -1,5 +1,5 @@
 ---
-- name: 
+- name: Derploy Vault Hunters Minecraft Server
   hosts:
     - game-k3s-managers
   run_once: true
