@@ -53,6 +53,7 @@
         TYPE: "VANILLA"
         # SEED: ""
         SPAWN_PROTECTION: "0"
+        VIEW_DISTANCE: "32"
         ALLOW_FLIGHT: "TRUE"
         MOTD: "{{ instance }} {{ version }}"
         # RCON_CMDS_STARTUP: |
