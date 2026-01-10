@@ -111,48 +111,6 @@
       data:
         ops.json: "{{ ops_json | to_json(indent=2,sort_keys=true) }}"
 
-
-- name: Create Deployment Network Policy
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: cilium.io/v2
-      kind: CiliumNetworkPolicy
-      metadata:
-        name: "{{ instance }}-allow"
-        namespace: "{{ namespace }}"
-        labels:
-          game: minecraft
-          app: "{{ instance }}"
-      spec:
-        endpointSelector:
-          matchLabels:
-            game: minecraft
-            app: "{{ instance }}"
-        ingress:
-          - fromEndpoints:
-              - matchLabels:
-                  app: prometheus
-            toPorts:
-              - ports:
-                  - port: "9150"
-                    protocol: TCP
-          - fromEntities:
-              - world
-            toPorts:
-              - ports:
-                  - port: "25565"
-                    protocol: TCP
-        egress:
-          - toEntities:
-              - world
-            toPorts:
-              - ports:
-                  - port: "443"
-                    protocol: TCP
-              - ports:
-                  - port: "80"
-                    protocol: TCP
-
 - name: Create Deployment
   register: deployment
   kubernetes.core.k8s:
