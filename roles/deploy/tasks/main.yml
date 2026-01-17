@@ -225,12 +225,8 @@
                       secretKeyRef:
                         name: cf-api-key
                         key: key
-                  - name: PROXY
-                    value: "{{ internet_proxy }}"
-                dnsConfig:
-                  nameservers:
-                  - 1.1.1.1
-                  - 1.0.0.1
+                  # - name: PROXY
+                  #   value: "{{ internet_proxy }}"
                 livenessProbe:
                   exec:
                     command:
@@ -323,6 +319,17 @@
                   name: "{{ instance }}-ops-{{ version }}"
               - name: "tmp"
                 emptyDir: {}
+            dnsPolicy: "None"
+            dnsConfig:
+              nameservers:
+                - 8.8.8.8
+                - 8.8.4.4
+                - 1.1.1.1
+              searches: []
+              options:
+                - name: ndots
+                  value: "1"
+                - name: edns0
 
 - name: Create Services
   kubernetes.core.k8s:
